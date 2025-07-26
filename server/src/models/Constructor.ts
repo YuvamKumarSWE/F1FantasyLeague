@@ -5,7 +5,6 @@ interface IConstructor {
     constructorId: string;
     name: string;
     nationality: string;
-    budgetValue?: number;
 }
 
 const constructorSchema = new Schema<IConstructor>({
@@ -20,13 +19,7 @@ const constructorSchema = new Schema<IConstructor>({
     },
     nationality: {
         type: String,
-        required: true
-    },
-    budgetValue: {
-        type: Number,
-        required: false,
-        min: 0,
-        default: 100 // Default budget value for fantasy purposes
+        required: false
     }
 }, {
     timestamps: true
