@@ -13,6 +13,8 @@ interface IRace {
     circuitShortName: string;
     gmtOffset: string;
     year: number;
+    sessionKey: number;
+    meetingKey: number;
 }
 
 const raceSchema = new Schema<IRace>({
@@ -59,16 +61,26 @@ const raceSchema = new Schema<IRace>({
     year: {
         type: Number,
         required: true
+    },
+    sessionKey: {
+        type: Number,
+        required: true
+    },
+    meetingKey: {
+        type: Number,
+        required: true
     }
 }, {
     timestamps: true
 });
 
 // Create compound index for year and session
-raceSchema.index({ year: 1, sessionType: 1, dateStart: 1 }, { unique: true });
+raceSchema.index({ sessionKey: 1 }, { unique: true });
+raceSchema.index({ year: 1, sessionType: 1, dateStart: 1 });
 raceSchema.index({ dateStart: 1 });
 raceSchema.index({ countryKey: 1 });
 raceSchema.index({ circuitKey: 1 });
+raceSchema.index({ meetingKey: 1 });
 
 export const Race = model<IRace>('Race', raceSchema);
 export type { IRace };

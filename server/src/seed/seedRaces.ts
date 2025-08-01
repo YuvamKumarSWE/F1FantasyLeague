@@ -26,7 +26,7 @@ async function seedRaces(): Promise<void> {
     await connectDb();
 
     // Change the year below if needed
-    const year = 2025;
+    const year = 2023;
  
     const response = await axios.get<ApiSession[]>(
       `https://api.openf1.org/v1/sessions?year=${year}`
@@ -60,7 +60,9 @@ async function seedRaces(): Promise<void> {
         circuitKey: session.circuit_key,
         circuitShortName: session.circuit_short_name,
         gmtOffset: session.gmt_offset,
-        year: session.year
+        year: session.year,
+        sessionKey: session.session_key,
+        meetingKey: session.meeting_key
       };
 
       const race = new Race(newRace);

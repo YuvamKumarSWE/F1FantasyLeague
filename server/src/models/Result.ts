@@ -4,10 +4,8 @@ import { Schema, model, Types } from "mongoose";
 interface IResult {
     race: Types.ObjectId;
     driver: Types.ObjectId;
-    constructor: string;
     position: number;
-    points: number;
-    fastestLap?: boolean;
+    
 }
 
 const resultSchema = new Schema<IResult>({
@@ -21,25 +19,11 @@ const resultSchema = new Schema<IResult>({
         ref: 'Driver',
         required: true
     },
-    constructor: {
-        type: String,
-        required: true
-    },
     position: {
         type: Number,
         required: true,
         min: 1
     },
-    points: {
-        type: Number,
-        required: true,
-        min: 0
-    },
-    fastestLap: {
-        type: Boolean,
-        required: false,
-        default: false
-    }
 }, {
     timestamps: true
 });
