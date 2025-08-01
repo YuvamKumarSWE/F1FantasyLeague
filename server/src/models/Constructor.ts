@@ -31,7 +31,6 @@ const constructorSchema = new Schema<IConstructor>({
 });
 
 // Create indexes for better query performance
-constructorSchema.index({ constructorId: 1 });
 constructorSchema.index({ budgetValue: 1 });
 
 export const Constructor = model<IConstructor>('Constructor', constructorSchema);

@@ -45,7 +45,6 @@ const userSchema = new Schema<IUser>({
 });
 
 // Create indexes for better query performance
-userSchema.index({ email: 1 });
 userSchema.index({ fantasyPoints: -1 }); // Descending for leaderboards
 userSchema.index({ role: 1 });
 

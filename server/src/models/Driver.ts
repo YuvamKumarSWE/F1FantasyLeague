@@ -47,7 +47,6 @@ const driverSchema = new Schema<IDriver>({
 });
 
 // Create indexes for better query performance
-driverSchema.index({ driverId: 1 });
 driverSchema.index({ constructorId: 1 });
 
 export const Driver = model<IDriver>('Driver', driverSchema);
