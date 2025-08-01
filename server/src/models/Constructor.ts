@@ -4,7 +4,8 @@ import { Schema, model } from "mongoose";
 interface IConstructor {
     constructorId: string;
     name: string;
-    nationality: string;
+    nationality?: string;
+    team_colour?: string;
 }
 
 const constructorSchema = new Schema<IConstructor>({
@@ -18,6 +19,10 @@ const constructorSchema = new Schema<IConstructor>({
         required: true
     },
     nationality: {
+        type: String,
+        required: false
+    },
+    team_colour: {
         type: String,
         required: false
     }

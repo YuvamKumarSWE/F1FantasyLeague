@@ -6,7 +6,7 @@ interface IDriver {
     givenName: string;
     familyName: string;
     code: string;
-    nationality: string;
+    nationality?: string;
     dateOfBirth?: Date;
     constructorId: string;
 }
