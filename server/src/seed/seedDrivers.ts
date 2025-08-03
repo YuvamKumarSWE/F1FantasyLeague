@@ -23,6 +23,11 @@ async function seedDrivers(): Promise<void> {
         // Connect to database first
         await connectDb();
         
+        // Delete all existing drivers before seeding
+        console.log('Deleting existing drivers...');
+        const deleteResult = await Driver.deleteMany({});
+        console.log(`Deleted ${deleteResult.deletedCount} existing drivers`);
+        
         const response = await axios.get<ApiDriver[]>('https://api.openf1.org/v1/drivers?&session_key=9947');
         const drivers: ApiDriver[] = response.data;
         
@@ -34,9 +39,16 @@ async function seedDrivers(): Promise<void> {
                 driverId: dId,
                 givenName: element.first_name,
                 familyName: element.last_name,
+                fullName: element.full_name,
+                driverNumber: Number(element.driver_number), // Ensure it's a number
                 code: element.name_acronym,
-                nationality: element.country_code || 'Unknown', // Use fallback when null
-                constructorId: element.team_name
+                nationality: element.country_code || 'Unknown',
+                constructorId: element.team_name,
+                teamName: element.team_name,
+                teamColour: element.team_colour || '#000000',
+                headshotUrl: element.headshot_url || '',
+                sessionKey: Number(element.session_key), // Ensure it's a number
+                meetingKey: Number(element.meeting_key), // Ensure it's a number
             };
             
             // Create new driver instance and save it
