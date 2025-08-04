@@ -5,6 +5,9 @@ import helmet from 'helmet';
 import cors from 'cors';
 
 const driverRouter = require('./routes/driverRouter');
+const constructorRouter = require('./routes/constructorRouter');
+const raceRouter = require('./routes/raceRoutes');
+
 
 dotenv.config();
 const app: Application = express();
@@ -27,6 +30,8 @@ app.get('/', (req: Request, res: Response) => {               // For type safety
 });
 
 app.use('/api/v1/drivers' , driverRouter);
+app.use('/api/v1/constructors', constructorRouter);
+app.use('/api/v1/races', raceRouter);
 
 // Start server
 app.listen(PORT, () => {
