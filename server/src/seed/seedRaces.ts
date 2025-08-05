@@ -21,18 +21,49 @@ interface ApiSession {
   year: number;
 }
 
+// Utility function to add delay
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+// Function to make API request with retry logic
+async function makeApiRequest<T>(url: string, retries = 3): Promise<T> {
+  for (let i = 0; i < retries; i++) {
+    try {
+      console.log(`Making API request to: ${url} (attempt ${i + 1})`);
+      const response = await axios.get<T>(url);
+      return response.data;
+    } catch (error: any) {
+      if (error.response?.status === 429) {
+        const waitTime = Math.pow(2, i) * 1000; // Exponential backoff
+        console.log(`Rate limited. Waiting ${waitTime}ms before retry...`);
+        await delay(waitTime);
+      } else {
+        throw error;
+      }
+    }
+  }
+  throw new Error(`Failed to fetch data after ${retries} attempts`);
+}
+
 async function seedRaces(): Promise<void> {
   try {
     await connectDb();
 
-    // Change the year below if needed
-    const year = 2023;
+    const year = 2025; 
+    try {
+      await Race.collection.drop();
+      console.log('Dropped entire Race collection');
+    } catch (error) {
+      console.log('Collection does not exist or already dropped');
+    }
+
+    // Add initial delay before making requests
+    console.log('Waiting 2 seconds before starting API requests...');
+    await delay(2000);
  
-    const response = await axios.get<ApiSession[]>(
+    const sessions = await makeApiRequest<ApiSession[]>(
       `https://api.openf1.org/v1/sessions?year=${year}`
     );
 
-    const sessions: ApiSession[] = response.data;
     console.log(`Fetched ${sessions.length} total sessions for ${year}`);
 
     // Filter for actual Race sessions (ignore practice, qual, etc.)
@@ -41,14 +72,13 @@ async function seedRaces(): Promise<void> {
     );
     console.log(`Found ${raceSessions.length} race sessions to seed`);
 
-    // Clear existing races for this year and drop old indexes
-    await Race.collection.dropIndexes();
-    console.log('Dropped old indexes');
-    
-    await Race.deleteMany({ year });
-    console.log(`Cleared existing races for year ${year}`);
-
-    const racePromises = raceSessions.map(async (session) => {
+    // Process races one by one with delays to avoid rate limiting
+    const savedRaces = [];
+    for (let i = 0; i < raceSessions.length; i++) {
+      const session = raceSessions[i];
+      
+      console.log(`Processing race ${i + 1}/${raceSessions.length}: ${session.session_name} - ${session.country_name}`);
+      
       const newRace: IRace = {
         dateStart: new Date(session.date_start),
         dateEnd: new Date(session.date_end),
@@ -66,14 +96,23 @@ async function seedRaces(): Promise<void> {
       };
 
       const race = new Race(newRace);
-      return await race.save();
-    });
+      const savedRace = await race.save();
+      savedRaces.push(savedRace);
 
-    await Promise.all(racePromises);
-    console.log(`Successfully seeded ${raceSessions.length} races`);
+      // Add delay between database operations
+      if (i < raceSessions.length - 1) {
+        console.log('Waiting 500ms before next operation...');
+        await delay(500);
+      }
+    }
+
+    console.log(`Successfully seeded ${savedRaces.length} races`);
 
   } catch (err: unknown) {
     console.error('Error seeding races:', err);
+    if (err instanceof Error) {
+      console.error('Error details:', err.message);
+    }
   } finally {
     await mongoose.connection.close();
   }
