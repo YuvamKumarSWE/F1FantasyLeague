@@ -13,14 +13,17 @@ exports.getAllConstructors = async(req: Request , res: Response) => {
         });
 
         return res.status(200).json({
+            success: true,
             message: "Constructors fetched successfully",
-            data: result 
-        }
-        );
+            data: result,
+            count: result.length
+        });
         
     } catch (error) {
         return res.status(500).json({
+            success: false,
             message: "Error fetching constructors",
+            data: [],
             error: error instanceof Error ? error.message : String(error)
         });
     }

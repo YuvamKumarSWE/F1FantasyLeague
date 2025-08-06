@@ -34,12 +34,26 @@ exports.getAllDrivers = async (req: Request, res: Response) => {
         const result = await Driver.find(searchQuery).sort(sortObject);
         
         if (!result || result.length === 0) {
-            return res.status(404).json({ message: "No drivers found" });
+            return res.status(404).json({
+                success: false,
+                message: "No drivers found",
+                data: []
+            });
         }
         
-        return res.status(200).json(result);
+        return res.status(200).json({
+            success: true,
+            message: "Drivers fetched successfully",
+            data: result,
+            count: result.length
+        });
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
-        return res.status(500).json({ message: "Error fetching drivers", error: errorMessage });
+        return res.status(500).json({
+            success: false,
+            message: "Error fetching drivers",
+            error: errorMessage,
+            data: []
+        });
     }
 }
