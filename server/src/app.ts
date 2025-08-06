@@ -7,6 +7,8 @@ import cors from 'cors';
 const driverRouter = require('./routes/driverRouter');
 const constructorRouter = require('./routes/constructorRouter');
 const raceRouter = require('./routes/raceRoutes');
+const resultRouter = require('./routes/resultRouter');
+const userRouter = require('./routes/userRouter');
 
 
 dotenv.config();
@@ -32,6 +34,8 @@ app.get('/', (req: Request, res: Response) => {               // For type safety
 app.use('/api/v1/drivers' , driverRouter);
 app.use('/api/v1/constructors', constructorRouter);
 app.use('/api/v1/races', raceRouter);
+app.use('/api/v1/results', resultRouter);
+app.use('/api/v1/user', userRouter);
 
 // Start server
 app.listen(PORT, () => {
