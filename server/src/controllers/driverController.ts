@@ -43,6 +43,7 @@ exports.getAllDrivers = async (req: Request, res: Response) => {
         
         return res.status(200).json({
             success: true,
+            //user: req.user?._id, this is injected by middleware
             message: "Drivers fetched successfully",
             data: result,
             count: result.length
