@@ -1,8 +1,8 @@
-import mongoose from "mongoose";
+import mongoose, { Document } from "mongoose";
 import { Schema, model } from "mongoose";
 import bcrypt from 'bcryptjs';
 
-interface IUser {
+interface IUser extends Document {
     email: string;
     username: string;
     password: string;
@@ -10,6 +10,7 @@ interface IUser {
     fantasyPoints: number;
     money: number
     role: 'user' | 'admin';
+    comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
 const userSchema = new Schema<IUser>({

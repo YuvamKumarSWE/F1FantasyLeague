@@ -4,8 +4,16 @@ import { Schema, model, Types } from "mongoose";
 interface IResult {
     race: Types.ObjectId;
     driver: Types.ObjectId;
-    position: number;
-    
+    position: number | null; // Allow null positions
+    sessionKey: number;
+    dnf: boolean;
+    dns: boolean;
+    dsq: boolean;
+    driverNumber?: number;
+    numberOfLaps?: number;
+    duration?: number;
+    gapToLeader?: number;
+    meetingKey?: number;
 }
 
 const resultSchema = new Schema<IResult>({
@@ -21,9 +29,49 @@ const resultSchema = new Schema<IResult>({
     },
     position: {
         type: Number,
-        required: true,
-        min: 1
+        required: false, // Changed to false to allow null
+        min: 1,
+        default: null // Allow null values
     },
+    sessionKey: {
+        type: Number,
+        required: true
+    },
+    dnf: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
+    dns: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
+    dsq: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
+    driverNumber: {
+        type: Number,
+        required: false
+    },
+    numberOfLaps: {
+        type: Number,
+        required: false
+    },
+    duration: {
+        type: Number,
+        required: false
+    },
+    gapToLeader: {
+        type: Number,
+        required: false
+    },
+    meetingKey: {
+        type: Number,
+        required: false
+    }
 }, {
     timestamps: true
 });
@@ -32,6 +80,8 @@ const resultSchema = new Schema<IResult>({
 resultSchema.index({ race: 1, driver: 1 }, { unique: true });
 resultSchema.index({ race: 1, position: 1 });
 resultSchema.index({ driver: 1 });
+resultSchema.index({ sessionKey: 1 });
+resultSchema.index({ meetingKey: 1 });
 
 export const Result = model<IResult>('Result', resultSchema);
 export type { IResult };
