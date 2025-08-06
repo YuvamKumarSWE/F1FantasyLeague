@@ -17,7 +17,7 @@ export default function Home() {
 
       <div className="relative z-10">
         {/* Header */}
-        <header className="px-6 py-8 lg:px-12">
+        <header className="px-6 pt-6 lg:px-12">
           <nav className="flex items-center justify-between">
             <div className="text-2xl font-bold text-white">
               F1<span className="text-red-500">FANTASY</span>
