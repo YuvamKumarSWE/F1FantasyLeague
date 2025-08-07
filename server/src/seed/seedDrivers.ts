@@ -2,6 +2,7 @@ import axios from 'axios';
 import mongoose from 'mongoose';
 import { Driver, IDriver } from '../models';
 import { connectDb } from '../config/db';
+import { getDriverCost } from '../utils/driverCostMap'; // Import cost function
 
 // Rename to avoid conflict with Driver model
 interface ApiDriver {
@@ -49,6 +50,7 @@ async function seedDrivers(): Promise<void> {
                 headshotUrl: element.headshot_url || '',
                 sessionKey: Number(element.session_key), // Ensure it's a number
                 meetingKey: Number(element.meeting_key), // Ensure it's a number
+                cost: getDriverCost(element.driver_number) // Get cost from map
             };
             
             // Create new driver instance and save it
@@ -57,7 +59,7 @@ async function seedDrivers(): Promise<void> {
         });
         
         await Promise.all(driverPromises);
-        console.log(`Successfully seeded ${drivers.length} drivers`);
+        console.log(`Successfully seeded ${drivers.length} drivers with costs`);
         
     } catch (err: unknown) {
         console.error('Error seeding drivers:', err);
