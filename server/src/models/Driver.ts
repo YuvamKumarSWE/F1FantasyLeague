@@ -16,6 +16,7 @@ interface IDriver {
     headshotUrl?: string;
     sessionKey: number;
     meetingKey: number;
+    cost: number;
 }
 
 const driverSchema = new Schema<IDriver>({
@@ -76,7 +77,12 @@ const driverSchema = new Schema<IDriver>({
     meetingKey: {
         type: Number,
         required: true
-    }
+    },
+    cost: {
+        type: Number,
+        required: true,
+        default: 0
+    },
 }, {
     timestamps: true
 });
