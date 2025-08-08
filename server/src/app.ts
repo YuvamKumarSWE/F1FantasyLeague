@@ -8,6 +8,7 @@ const driverRouter = require('./routes/driverRouter');
 const constructorRouter = require('./routes/constructorRouter');
 const raceRouter = require('./routes/raceRoutes');
 const userRouter = require('./routes/userRouter');
+const standingRouter = require('./routes/standingRouter');
 
 
 dotenv.config();
@@ -34,6 +35,7 @@ app.use('/api/v1/drivers' , driverRouter);
 app.use('/api/v1/constructors', constructorRouter);
 app.use('/api/v1/races', raceRouter);
 app.use('/api/v1/user', userRouter);
+app.use('/api/v1/standings', standingRouter);
 
 // Start server
 app.listen(PORT, () => {
