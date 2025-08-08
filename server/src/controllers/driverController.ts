@@ -4,25 +4,27 @@ import { Request, Response } from "express";
 exports.getAllDrivers = async (req: Request, res: Response) => {
     try {
         const { 
-            sortBy = 'driverNumber', 
+            sortBy = 'number', 
             sortOrder = 'asc', 
             search 
         } = req.query;
-
 
         // Build search query
         let searchQuery: any = {};
         if (search && typeof search === 'string') {
             searchQuery = {
                 $or: [
-                    { fullName: { $regex: search, $options: 'i' } }
+                    { name: { $regex: search, $options: 'i' } },
+                    { surname: { $regex: search, $options: 'i' } },
+                    { driverId: { $regex: search, $options: 'i' } },
+                    { shortName: { $regex: search, $options: 'i' } }
                 ]
             };
         }
 
         // Validate sort field
-        const validSortFields = ['driverId', 'givenName', 'familyName', 'code', 'teamName', 'driverNumber'];
-        const sortField = validSortFields.includes(sortBy as string) ? sortBy as string : 'driverNumber';
+        const validSortFields = ['driverId', 'name', 'surname', 'shortName', 'teamId', 'number', 'nationality'];
+        const sortField = validSortFields.includes(sortBy as string) ? sortBy as string : 'number';
         
         // Validate sort order
         const order = sortOrder === 'desc' ? -1 : 1;
@@ -43,7 +45,6 @@ exports.getAllDrivers = async (req: Request, res: Response) => {
         
         return res.status(200).json({
             success: true,
-            //user: req.user?._id, this is injected by middleware
             message: "Drivers fetched successfully",
             data: result,
             count: result.length
