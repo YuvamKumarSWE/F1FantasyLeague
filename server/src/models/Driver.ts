@@ -3,19 +3,14 @@ import { Schema, model } from "mongoose";
 
 interface IDriver {
     driverId: string;
-    givenName: string;
-    familyName: string;
-    fullName: string;
-    driverNumber: number;
-    code: string;
-    nationality?: string;
-    dateOfBirth?: Date;
-    constructorId: string;
-    teamName: string;
-    teamColour?: string;
-    headshotUrl?: string;
-    sessionKey: number;
-    meetingKey: number;
+    name: string;
+    surname: string;
+    nationality: string;
+    birthday: string;
+    number: number;
+    shortName: string;
+    url?: string;
+    teamId: string;
     cost: number;
 }
 
@@ -25,57 +20,37 @@ const driverSchema = new Schema<IDriver>({
         required: true,
         unique: true
     },
-    givenName: {
+    name: {
         type: String,
         required: true
     },
-    familyName: {
+    surname: {
         type: String,
         required: true
     },
-    fullName: {
+    nationality: {
         type: String,
         required: true
     },
-    driverNumber: {
+    birthday: {
+        type: String,
+        required: true
+    },
+    number: {
         type: Number,
         required: true
     },
-    code: {
+    shortName: {
         type: String,
         required: true,
         maxlength: 3
     },
-    nationality: {
+    url: {
         type: String,
         required: false
     },
-    dateOfBirth: {
-        type: Date,
-        required: false
-    },
-    constructorId: {
+    teamId: {
         type: String,
-        required: true
-    },
-    teamName: {
-        type: String,
-        required: true
-    },
-    teamColour: {
-        type: String,
-        required: false
-    },
-    headshotUrl: {
-        type: String,
-        required: false
-    },
-    sessionKey: {
-        type: Number,
-        required: true
-    },
-    meetingKey: {
-        type: Number,
         required: true
     },
     cost: {
@@ -88,7 +63,8 @@ const driverSchema = new Schema<IDriver>({
 });
 
 // Create indexes for better query performance
-driverSchema.index({ constructorId: 1 });
+driverSchema.index({ teamId: 1 });
+driverSchema.index({ number: 1 });
 
 export const Driver = model<IDriver>('Driver', driverSchema);
 export type { IDriver };
