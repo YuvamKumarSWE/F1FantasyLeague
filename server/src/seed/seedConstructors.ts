@@ -3,57 +3,55 @@ import { Constructor, IConstructor } from "../models";
 import { connectDb } from "../config/db";
 import mongoose from "mongoose";
 
-interface ApiDriver {
-    full_name: string;
-    driver_number: number;
-    name_acronym: string;
-    team_name: string;
-    team_colour: string;
-    first_name: string;
-    last_name: string;
-    headshot_url: string;
-    country_code: string;
-    session_key: number;
-    meeting_key: number;
+interface ApiTeam {
+    teamId: string;
+    teamName: string;
+    teamNationality: string;
+    firstAppeareance: number;
+    constructorsChampionships: number;
+    driversChampionships: number;
+    url: string;
 }
 
-
+interface ApiResponse {
+    api: string;
+    url: string;
+    limit: number;
+    offset: number;
+    total: number;
+    season: number;
+    championshipId: string;
+    teams: ApiTeam[];
+}
 
 const getConstructors = async (): Promise<void> => {
     try{
         // Connect to the database
         await connectDb();
         
-        const response = await axios.get<ApiDriver[]>('https://api.openf1.org/v1/drivers?&session_key=9951');
-        const data : ApiDriver[] = response.data;
+        const response = await axios.get<ApiResponse>('https://f1api.dev/api/current/teams');
+        const data: ApiTeam[] = response.data.teams;
 
-        const constructorMap = new Map<string, IConstructor>();
-        
-        data.forEach((element) => {
-            // Only add if we haven't seen this team_name before
-            if (!constructorMap.has(element.team_name)) {
-                const obj: IConstructor = {
-                    constructorId: element.team_name,
-                    name: element.team_name,
-                    nationality: " ",
-                    team_colour: element.team_colour
-                }
-                constructorMap.set(element.team_name, obj);
-            }
-        });
-        
-        const uniqueConstructors : IConstructor[] = Array.from(constructorMap.values());
+        const constructors: IConstructor[] = data.map((team) => ({
+            constructorId: team.teamId,
+            name: team.teamName,
+            nationality: team.teamNationality,
+            constructorsChampionships: team.constructorsChampionships,
+            driversChampionships: team.driversChampionships,
+            firstAppearance: team.firstAppeareance,
+            url: team.url
+        }));
 
         // Clear existing constructors (optional - remove if you want to keep existing data)
         await Constructor.deleteMany({});
         console.log("Cleared existing constructors");
 
-        // Save all unique constructors to the database
-        const savedConstructors = await Constructor.insertMany(uniqueConstructors);
+        // Save all constructors to the database
+        const savedConstructors = await Constructor.insertMany(constructors);
         console.log(`Successfully saved ${savedConstructors.length} constructors to the database:`);
         
         savedConstructors.forEach((constructor) => {
-            console.log(`- ${constructor.name} (${constructor.constructorId})`);
+            console.log(`- ${constructor.name} (${constructor.constructorId}) - ${constructor.nationality}`);
         });
 
         // Close the database connection
