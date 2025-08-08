@@ -9,7 +9,10 @@ exports.getAllConstructors = async(req: Request , res: Response) => {
             constructorId: 1,
             name: 1,
             nationality: 1,
-            team_colour: 1,
+            constructorsChampionships: 1,
+            driversChampionships: 1,
+            firstAppearance: 1,
+            url: 1
         });
 
         return res.status(200).json({
