@@ -1,0 +1,169 @@
+drivers (search/sortBy/sortOrder) - 
+
+"data": [
+        {
+            "_id": "6894d50a520b8327cb344665",
+            "driverId": "norris",
+            "name": "Lando",
+            "surname": "Norris",
+            "nationality": "Great Britain",
+            "birthday": "13/11/1999",
+            "number": 4,
+            "shortName": "NOR",
+            "url": "https://en.wikipedia.org/wiki/Lando_Norris",
+            "teamId": "mclaren",
+            "cost": 28.5,
+            "createdAt": "2025-08-07T16:32:10.721Z",
+            "updatedAt": "2025-08-07T16:32:10.721Z",
+            "__v": 0
+        },
+
+
+standings {year} -
+
+"data": [
+        {
+            "classificationId": 3399,
+            "driverId": "piastri",
+            "teamId": "mclaren",
+            "points": 284,
+            "position": 1,
+            "wins": 6,
+            "driver": {
+                "name": "Oscar",
+                "surname": "Piastri",
+                "nationality": "Australia",
+                "birthday": "06/04/2001",
+                "number": 81,
+                "shortName": "PIA",
+                "url": "https://en.wikipedia.org/wiki/Oscar_Piastri"
+            },
+            "team": {
+                "teamId": "mclaren",
+                "teamName": "McLaren Formula 1 Team",
+                "country": "Great Britain",
+                "firstAppareance": 1966,
+                "constructorsChampionships": 9,
+                "driversChampionships": 12,
+                "url": "https://en.wikipedia.org/wiki/McLaren"
+            }
+        },
+
+
+
+race {year} -
+
+"data": [
+        {
+            "_id": "6895899e909743450dbe09f1",
+            "raceId": "australian_2025",
+            "championshipId": "f1_2025",
+            "raceName": "Louis Vuitton Australian Grand Prix 2025",
+            "year": 2025,
+            "round": 1,
+            "laps": 58,
+            "url": "https://en.wikipedia.org/wiki/2025_Australian_Grand_Prix",
+            "schedule": {
+                "race": "2025-03-16T04:00:00.000Z",
+                "qualy": "2025-03-15T05:00:00.000Z",
+                "fp1": "2025-03-14T01:30:00.000Z",
+                "fp2": "2025-03-14T05:00:00.000Z",
+                "fp3": "2025-03-15T01:30:00.000Z",
+                "sprintQualy": null,
+                "sprintRace": null
+            },
+            "circuit": {
+                "circuitId": "albert_park",
+                "circuitName": "Albert Park Circuit",
+                "country": "Australia",
+                "city": "Melbourne",
+                "circuitLength": "5278km",
+                "lapRecord": "1:19:813",
+                "firstParticipationYear": 1996,
+                "corners": 14,
+                "fastestLapDriverId": "leclerc",
+                "fastestLapTeamId": "ferrari",
+                "fastestLapYear": 2024,
+                "url": "https://en.wikipedia.org/wiki/Albert_Park_Circuit"
+            },
+            "fastLap": {
+                "time": "1:22.167",
+                "driverId": "norris",
+                "teamId": "mclaren"
+            },
+            "winner": {
+                "driverId": "norris",
+                "name": "Lando",
+                "surname": "Norris",
+                "country": "Great Britain",
+                "birthday": "13/11/1999",
+                "number": 4,
+                "shortName": "NOR",
+                "url": "https://en.wikipedia.org/wiki/Lando_Norris"
+            },
+            "teamWinner": {
+                "teamId": "mclaren",
+                "teamName": "McLaren Formula 1 Team",
+                "country": "Great Britain",
+                "firstAppearance": 1966,
+                "constructorsChampionships": 9,
+                "driversChampionships": 12,
+                "url": "https://en.wikipedia.org/wiki/McLaren"
+            },
+            "__v": 0,
+            "createdAt": "2025-08-08T05:22:38.036Z",
+            "updatedAt": "2025-08-08T05:22:38.036Z"
+        },
+
+
+FUTURE -
+{
+            "_id": "6895899e909743450dbe0a08",
+            "raceId": "abu_dhabi_2025",
+            "championshipId": "f1_2025",
+            "raceName": "Etihad Airways Abu Dhabi Grand Prix 2025",
+            "year": 2025,
+            "round": 24,
+            "laps": 58,
+            "url": "https://en.wikipedia.org/wiki/2025_Abu_Dhabi_Grand_Prix",
+            "schedule": {
+                "race": "2025-12-07T13:00:00.000Z",
+                "qualy": "2025-12-06T14:00:00.000Z",
+                "fp1": "2025-12-05T09:30:00.000Z",
+                "fp2": "2025-12-05T13:00:00.000Z",
+                "fp3": "2025-12-06T10:30:00.000Z",
+                "sprintQualy": null,
+                "sprintRace": null
+            },
+            "circuit": {
+                "circuitId": "yas_marina",
+                "circuitName": "Yas Marina Circuit",
+                "country": "United Arab Emirates",
+                "city": "Abu Dhabi",
+                "circuitLength": "5281km",
+                "lapRecord": "1:26:103",
+                "firstParticipationYear": 2009,
+                "corners": 16,
+                "fastestLapDriverId": "max_verstappen",
+                "fastestLapTeamId": "red_bull",
+                "fastestLapYear": 2021,
+                "url": "https://en.wikipedia.org/wiki/Yas_Marina_Circuit"
+            },
+            "__v": 0,
+            "createdAt": "2025-08-08T05:22:38.037Z",
+            "updatedAt": "2025-08-08T05:22:38.037Z"
+}
+
+Constructors - 
+
+"data": [
+        {
+            "_id": "68978c2e390c446f795dc433",
+            "constructorId": "mclaren",
+            "name": "McLaren Formula 1 Team",
+            "nationality": "Great Britain",
+            "constructorsChampionships": 9,
+            "driversChampionships": 12,
+            "firstAppearance": 1966,
+            "url": "https://en.wikipedia.org/wiki/McLaren"
+        },
