@@ -3,7 +3,7 @@ import { Race, IRace } from "../models";
 
 exports.getRaces = async (req: Request, res: Response) => {
   try {
-    const { year = '2025' } = req.params;
+    const { year = '2025' } = req.query;
 
     const yearNumber = parseInt(year as string, 10);
     if (isNaN(yearNumber) || yearNumber >= 2026 || yearNumber < 2023) {
@@ -34,11 +34,9 @@ exports.getRaces = async (req: Request, res: Response) => {
     return res.status(200).json({
       success: true,
       message: "Races fetched successfully",
-      data: {
-        races: result,
-        count: result.length,
-        filters: { year: yearNumber }
-      }
+      count: result.length,
+      filters: { year: yearNumber },
+      data: result,
     });
   } catch (error) {
     console.error("Error fetching races:", error);
