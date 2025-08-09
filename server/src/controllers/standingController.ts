@@ -11,11 +11,16 @@ exports.getStandings = async (req: Request, res: Response) => {
 
     const response = await axios.get(`https://f1api.dev/api/${year}/drivers-championship`);
     const data = response.data.drivers_championship;
-    res.status(200).json(data);
+    res.status(200).json({
+        success: true,
+        data: data
+    });
 
     
   } catch (error) {
     console.error('Error fetching standings:', error);
-    res.status(500).json({ message: 'Server Error' });
+    res.status(500).json({
+        success: false,
+        message: 'Server Error' });
   }
 };
