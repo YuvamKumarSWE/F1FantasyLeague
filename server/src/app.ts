@@ -5,12 +5,14 @@ import helmet from 'helmet';
 import cors from 'cors';
 import morgan from 'morgan';
 
+
 const driverRouter = require('./routes/driverRouter');
 const constructorRouter = require('./routes/constructorRouter');
 const raceRouter = require('./routes/raceRoutes');
 const userRouter = require('./routes/userRouter');
 const standingRouter = require('./routes/standingRouter');
 const fantasyTeamRouter = require('./routes/fantasyTeamRouter');
+import gameRouter from './routes/gameRouter';
 
 
 dotenv.config();
@@ -42,6 +44,8 @@ app.use('/api/v1/races', raceRouter);
 app.use('/api/v1/user', userRouter);
 app.use('/api/v1/standings', standingRouter);
 app.use('/api/v1/ft', fantasyTeamRouter);
+
+app.use('/api/v1/admin/game', gameRouter);
 
 // Start server
 app.listen(PORT, () => {
