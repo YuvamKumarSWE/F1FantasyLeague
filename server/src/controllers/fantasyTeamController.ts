@@ -1,12 +1,16 @@
 import {Request,Response} from 'express';
 import axios from 'axios';
 import { FantasyTeam, Driver } from '../models';
+import mongoose from 'mongoose';
 
 
 
 
 exports.createTeam = async(req: Request, res: Response) => {
     try {
+
+        const TOTAL_BUDGET = 100;
+
         const userId = req.user?._id;
         
         // Add validation for req.body
@@ -80,6 +84,22 @@ exports.createTeam = async(req: Request, res: Response) => {
                 message: 'Captain must be one of the selected drivers.'
             });
         }
+
+        const objectIds = drivers.map(driver => new mongoose.Types.ObjectId(driver));
+
+        const docs = await Driver.find({ _id: { $in: objectIds } });
+
+        let totalCost = 0;
+        for (const doc of docs) {
+            totalCost += doc.cost; 
+        }
+
+        if(totalCost > TOTAL_BUDGET){
+            return res.status(500).json({
+                success: false,
+                message: 'Cost exceeds the budget'
+            });
+        }
         
         // Check if team already exists for this user
         const existingTeam = await FantasyTeam.findOne({ user: userId , race: raceId});
@@ -108,6 +128,7 @@ exports.createTeam = async(req: Request, res: Response) => {
             userId,
             lockDate: lockTime,
             currentDate,
+            totalCost,
             team: {
                 id: newTeam._id,
                 drivers: newTeam.drivers,
