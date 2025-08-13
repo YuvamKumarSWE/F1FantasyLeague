@@ -245,7 +245,7 @@ const AnalyticsPage: React.FC = () => {
                   'border-gray-500'
                 }`}>
                   <div className="flex items-start space-x-3">
-                    <div className={`mt-0.5 ${
+                    <div className={`${
                       insight.type === 'positive' ? 'text-green-500' :
                       insight.type === 'warning' ? 'text-yellow-500' :
                       insight.type === 'negative' ? 'text-red-500' :
