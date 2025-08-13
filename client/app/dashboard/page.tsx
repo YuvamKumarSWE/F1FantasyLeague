@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { 
   Clock, 
   Star, 
@@ -317,10 +318,10 @@ const Dashboard: React.FC = () => {
                 <div className="w-1 h-5 md:h-6 bg-red-600"></div>
                 <h3 className="text-base md:text-lg font-light text-white uppercase tracking-wide">Leaderboard</h3>
               </div>
-              <a href="/dashboard/leaderboard" className="text-gray-400 hover:text-white text-xs font-mono uppercase tracking-wider flex items-center space-x-1">
+              <Link href="/dashboard/leaderboard" className="text-gray-400 hover:text-white text-xs font-mono uppercase tracking-wider flex items-center space-x-1">
                 <span>View All</span>
                 <ChevronRight className="h-3 w-3" />
-              </a>
+              </Link>
             </div>
 
             <div className="space-y-1 mb-4 md:mb-6">
@@ -356,18 +357,18 @@ const Dashboard: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <a href="/dashboard/drivers" className="block bg-gray-800 p-3 hover:bg-gray-700 transition-colors border-l-2 border-gray-700 hover:border-red-600">
+              <Link href="/dashboard/drivers" className="block bg-gray-800 p-3 hover:bg-gray-700 transition-colors border-l-2 border-gray-700 hover:border-red-600">
                 <div className="text-white font-mono text-sm uppercase tracking-wider">Drivers</div>
                 <div className="text-gray-400 text-xs">Browse all drivers & stats</div>
-              </a>
-              <a href="/dashboard/constructors" className="block bg-gray-800 p-3 hover:bg-gray-700 transition-colors border-l-2 border-gray-700 hover:border-red-600">
+              </Link>
+              <Link href="/dashboard/constructors" className="block bg-gray-800 p-3 hover:bg-gray-700 transition-colors border-l-2 border-gray-700 hover:border-red-600">
                 <div className="text-white font-mono text-sm uppercase tracking-wider">Constructors</div>
                 <div className="text-gray-400 text-xs">Team standings & info</div>
-              </a>
-              <a href="/dashboard/analytics" className="block bg-gray-800 p-3 hover:bg-gray-700 transition-colors border-l-2 border-gray-700 hover:border-red-600">
+              </Link>
+              <Link href="/dashboard/analytics" className="block bg-gray-800 p-3 hover:bg-gray-700 transition-colors border-l-2 border-gray-700 hover:border-red-600">
                 <div className="text-white font-mono text-sm uppercase tracking-wider">Analytics</div>
                 <div className="text-gray-400 text-xs">Advanced team insights</div>
-              </a>
+              </Link>
             </div>
           </div>
 
@@ -392,9 +393,9 @@ const Dashboard: React.FC = () => {
               ))}
             </div>
 
-            <a href="/dashboard/analytics" className="block w-full mt-4 md:mt-6 border border-gray-700 text-white py-2 md:py-3 text-xs md:text-sm font-mono uppercase tracking-wide hover:bg-gray-800 transition-all text-center">
+            <Link href="/dashboard/analytics" className="block w-full mt-4 md:mt-6 border border-gray-700 text-white py-2 md:py-3 text-xs md:text-sm font-mono uppercase tracking-wide hover:bg-gray-800 transition-all text-center">
               Advanced Analytics
-            </a>
+            </Link>
           </div>
         </div>
       </div>
