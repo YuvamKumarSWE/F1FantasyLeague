@@ -27,11 +27,22 @@ gameRouter.get('/:raceId', authMiddleware, async (req: Request, res: Response) =
     const race = await Race.findById(raceId).exec();
     const reqRaceId = race?.raceId;
 
+    if(resRaceId != reqRaceId){
+         return res.status(500).json({
+            success: false,
+            message: "Not the latest race!"
+        });
+    }
+
+    
+
+
+
     return res.status(200).json({
         success : true,
         res: resRaceId,
         req: reqRaceId
-    })
+    });
 
 
 
