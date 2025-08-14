@@ -3,6 +3,62 @@ import axios from 'axios';
 import { FantasyTeam, Driver } from '../models';
 import mongoose from 'mongoose';
 
+// Team composition validation function
+const validateTeamComposition = async (drivers: any[]): Promise<{ valid: boolean; error?: string }> => {
+    try {
+        // Check team composition rules
+        const teamCounts: { [key: string]: number } = {};
+        const constructorCounts: { [key: string]: number } = {};
+        
+        for (const driver of drivers) {
+            // Count drivers per team (using teamId)
+            if (driver.teamId) {
+                teamCounts[driver.teamId] = (teamCounts[driver.teamId] || 0) + 1;
+            }
+            
+            // Count drivers per constructor (using constructorId if available)
+            if (driver.constructorId) {
+                constructorCounts[driver.constructorId] = (constructorCounts[driver.constructorId] || 0) + 1;
+            }
+        }
+        
+        // Rule 1: Maximum 2 drivers from the same team
+        for (const [teamId, count] of Object.entries(teamCounts)) {
+            if (count > 2) {
+                return { 
+                    valid: false, 
+                    error: `Cannot select more than 2 drivers from the same team. Team ${teamId} has ${count} drivers selected.` 
+                };
+            }
+        }
+        
+        // Rule 2: Maximum 2 drivers from the same constructor (if constructorId exists)
+        for (const [constructorId, count] of Object.entries(constructorCounts)) {
+            if (count > 2) {
+                return { 
+                    valid: false, 
+                    error: `Cannot select more than 2 drivers from the same constructor. Constructor ${constructorId} has ${count} drivers selected.` 
+                };
+            }
+        }
+        
+        // Rule 3: Must select exactly 5 drivers
+        if (drivers.length !== 5) {
+            return { 
+                valid: false, 
+                error: `Must select exactly 5 drivers. Currently selected: ${drivers.length}` 
+            };
+        }
+        
+        return { valid: true };
+    } catch (error) {
+        return { 
+            valid: false, 
+            error: `Validation error: ${error instanceof Error ? error.message : 'Unknown error'}` 
+        };
+    }
+};
+
 
 
 
@@ -36,6 +92,37 @@ exports.createTeam = async(req: Request, res: Response) => {
             return res.status(400).json({
                 success: false,
                 message: 'raceId and drivers array are required.'
+            });
+        }
+
+        // Validate raceId is a valid ObjectId
+        if (!mongoose.Types.ObjectId.isValid(raceId)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid raceId format.'
+            });
+        }
+
+        // Check if the requested race matches the next race
+        const nextRaceData = await getNextRace();
+        const nextRaceId = nextRaceData?.raceId;
+        
+        // Find the race document to get its raceId
+        const raceDocument = await mongoose.model('Race').findById(raceId);
+        if (!raceDocument) {
+            return res.status(400).json({
+                success: false,
+                message: 'Race not found.'
+            });
+        }
+
+        // Compare the race's raceId with the next race from API
+        if (raceDocument.raceId !== nextRaceId) {
+            return res.status(400).json({
+                success: false,
+                message: 'You can only create teams for the next upcoming race.',
+                requestedRace: raceDocument.raceId,
+                nextRace: nextRaceId
             });
         }
 
@@ -78,10 +165,27 @@ exports.createTeam = async(req: Request, res: Response) => {
             });
         }
 
+        // Enhanced team composition validation
+        const teamValidation = await validateTeamComposition(existingDrivers);
+        if (!teamValidation.valid) {
+            return res.status(400).json({
+                success: false,
+                message: teamValidation.error
+            });
+        }
+
         if (captain && !uniqueDrivers.has(captain)) {
             return res.status(400).json({
                 success: false,
                 message: 'Captain must be one of the selected drivers.'
+            });
+        }
+
+        // Additional validation: ensure captain is a valid ObjectId if provided
+        if (captain && !mongoose.Types.ObjectId.isValid(captain)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Captain must be a valid driver ID.'
             });
         }
 
@@ -182,19 +286,36 @@ exports.getTeam = async(req: Request, res:Response) => {
 
 }
 
-// Additional 
-const lockDate = async (): Promise<string> => {
+// Helper function to get next race data
+const getNextRace = async () => {
     try {
         const { data } = await axios.get('https://f1api.dev/api/current/next', { timeout: 10000 });
-
+        
         const race = Array.isArray(data?.race) ? data.race[0] : data?.race;
         if (!race) {
             throw new Error('Race payload missing from API response');
         }
 
+        return race;
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            const status = error.response?.status;
+            const msg = (error.response?.data as any)?.message || error.message;
+            console.error('HTTP error fetching next race:', status, msg);
+        } else {
+            console.error('Error fetching next race:', error);
+        }
+        throw (error instanceof Error) ? error : new Error('Unknown error fetching next race');
+    }
+}
+
+// Additional 
+const lockDate = async (): Promise<string> => {
+    try {
+        const race = await getNextRace();
+
         const fp1 = race?.schedule?.fp1;
 
-       
         const datePart: string | null | undefined = fp1?.date;
         if (!datePart) {
             throw new Error('Lock date not available in schedule');

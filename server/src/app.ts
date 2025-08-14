@@ -12,7 +12,9 @@ const raceRouter = require('./routes/raceRoutes');
 const userRouter = require('./routes/userRouter');
 const standingRouter = require('./routes/standingRouter');
 const fantasyTeamRouter = require('./routes/fantasyTeamRouter');
+const resultRouter = require('./routes/resultRoutes');
 import gameRouter from './routes/gameRouter';
+import leaderboardRouter from './routes/leaderboardRouter';
 
 
 dotenv.config();
@@ -44,6 +46,8 @@ app.use('/api/v1/races', raceRouter);
 app.use('/api/v1/user', userRouter);
 app.use('/api/v1/standings', standingRouter);
 app.use('/api/v1/ft', fantasyTeamRouter);
+app.use('/api/v1/results', resultRouter);
+app.use('/api/v1/leaderboard', leaderboardRouter);
 
 app.use('/api/v1/admin/game', gameRouter);
 
