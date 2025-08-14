@@ -74,68 +74,6 @@ export const calculateFantasyPoints = (result: any, isCaptain: boolean = false):
     return isCaptain ? points * 2 : points;
 };
 
-// Get driver's fantasy points for a specific race
-export const getDriverFantasyPoints = async (req: Request, res: Response) => {
-    try {
-        const { year, round, driverId } = req.params;
-        const { isCaptain } = req.query;
-        
-        if (!year || !round || !driverId) {
-            return res.status(400).json({
-                success: false,
-                message: 'Year, round, and driverId parameters are required'
-            });
-        }
-        
-        // Get race results from external API
-        const apiUrl = `https://f1api.dev/api/${year}/${round}/race`;
-        const response = await axios.get(apiUrl);
-        
-        if (!response.data?.races?.results) {
-            return res.status(404).json({
-                success: false,
-                message: 'Race results not found'
-            });
-        }
-        
-        // Find the specific driver's result
-        const driverResult = response.data.races.results.find(
-            (result: any) => result.driver.driverId === driverId
-        );
-        
-        if (!driverResult) {
-            return res.status(404).json({
-                success: false,
-                message: 'Driver result not found in this race'
-            });
-        }
-        
-        const fantasyPoints = calculateFantasyPoints(driverResult, isCaptain === 'true');
-        
-        return res.status(200).json({
-            success: true,
-            data: {
-                driverId,
-                year,
-                round,
-                position: driverResult.position,
-                f1Points: driverResult.points,
-                fantasyPoints,
-                isCaptain: isCaptain === 'true',
-                driverResult
-            }
-        });
-        
-    } catch (error) {
-        console.error('Error calculating fantasy points:', error);
-        return res.status(500).json({
-            success: false,
-            message: 'Error calculating fantasy points',
-            error: error instanceof Error ? error.message : String(error)
-        });
-    }
-};
-
 // Get all drivers' fantasy points for a specific race
 export const getAllDriversFantasyPoints = async (req: Request, res: Response) => {
     try {
@@ -199,7 +137,6 @@ export const getAllDriversFantasyPoints = async (req: Request, res: Response) =>
 
 export default {
     getRaceResults,
-    getDriverFantasyPoints,
     getAllDriversFantasyPoints,
     calculateFantasyPoints
 };
