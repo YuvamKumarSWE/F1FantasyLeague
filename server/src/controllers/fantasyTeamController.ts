@@ -22,27 +22,7 @@ const validateTeamComposition = async (drivers: any[]): Promise<{ valid: boolean
             }
         }
         
-        // Rule 1: Maximum 2 drivers from the same team
-        for (const [teamId, count] of Object.entries(teamCounts)) {
-            if (count > 2) {
-                return { 
-                    valid: false, 
-                    error: `Cannot select more than 2 drivers from the same team. Team ${teamId} has ${count} drivers selected.` 
-                };
-            }
-        }
-        
-        // Rule 2: Maximum 2 drivers from the same constructor (if constructorId exists)
-        for (const [constructorId, count] of Object.entries(constructorCounts)) {
-            if (count > 2) {
-                return { 
-                    valid: false, 
-                    error: `Cannot select more than 2 drivers from the same constructor. Constructor ${constructorId} has ${count} drivers selected.` 
-                };
-            }
-        }
-        
-        // Rule 3: Must select exactly 5 drivers
+        // Rule : Must select exactly 5 drivers
         if (drivers.length !== 5) {
             return { 
                 valid: false, 
