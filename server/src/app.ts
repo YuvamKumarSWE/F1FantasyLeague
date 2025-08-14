@@ -5,14 +5,13 @@ import helmet from 'helmet';
 import cors from 'cors';
 import morgan from 'morgan';
 
-
-const driverRouter = require('./routes/driverRouter');
-const constructorRouter = require('./routes/constructorRouter');
-const raceRouter = require('./routes/raceRoutes');
-const userRouter = require('./routes/userRouter');
-const standingRouter = require('./routes/standingRouter');
-const fantasyTeamRouter = require('./routes/fantasyTeamRouter');
-const resultRouter = require('./routes/resultRoutes');
+import driverRouter from './routes/driverRouter';
+import constructorRouter from './routes/constructorRouter';
+import raceRouter from './routes/raceRoutes';
+import userRouter from './routes/userRouter';
+import standingRouter from './routes/standingRouter';
+import fantasyTeamRouter from './routes/fantasyTeamRouter';
+import resultRouter from './routes/resultRoutes';
 import gameRouter from './routes/gameRouter';
 import leaderboardRouter from './routes/leaderboardRouter';
 
@@ -28,7 +27,12 @@ app.use(express.urlencoded({ extended: true }));
 // Adds security headers to protect against common vulnerabilities (XSS, clickjacking, etc.)
 app.use(helmet());
 // Enables Cross-Origin Resource Sharing - allows frontend from different domains to access this API
-app.use(cors());
+app.use(cors({
+  origin: process.env.CLIENT_URL || 'http://localhost:3000', // Specific origin, not wildcard
+  credentials: true, // Allow credentials (cookies)
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 // Logs HTTP requests to the console for debugging and monitoring
 app.use(morgan('dev'));
 
@@ -43,7 +47,7 @@ app.get('/', (req: Request, res: Response) => {               // For type safety
 app.use('/api/v1/drivers' , driverRouter);
 app.use('/api/v1/constructors', constructorRouter);
 app.use('/api/v1/races', raceRouter);
-app.use('/api/v1/user', userRouter);
+app.use('/api/v1/users', userRouter); // Changed from 'user' to 'users' to match frontend
 app.use('/api/v1/standings', standingRouter);
 app.use('/api/v1/ft', fantasyTeamRouter);
 app.use('/api/v1/results', resultRouter);

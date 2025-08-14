@@ -6,4 +6,4 @@ import { authMiddleware } from '../middleware/authMiddleware';
 router.route('/').post(authMiddleware, fantasyTeamController.createTeam);
 router.route('/:raceId').get(authMiddleware, fantasyTeamController.getTeam);
 
-module.exports = router;
+export default router;

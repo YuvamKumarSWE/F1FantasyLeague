@@ -5,4 +5,4 @@ const driverController = require('../controllers/driverController');
 const router = express.Router();
 
 router.route('/').get( driverController.getAllDrivers);
-module.exports = router;
+export default router;

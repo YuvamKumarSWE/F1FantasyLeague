@@ -17,4 +17,4 @@ router.route('/upcoming').get(raceController.getUpcomingRaces);
 // Get race status by ID
 router.route('/:raceId/status').get(raceController.getRaceStatus);
 
-module.exports=router;
+export default router;

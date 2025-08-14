@@ -4,4 +4,4 @@ const constructorController = require('../controllers/constructorController');
 
 router.route('/').get(constructorController.getAllConstructors);
 
-module.exports=router;
+export default router;
