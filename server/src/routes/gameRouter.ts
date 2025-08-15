@@ -8,6 +8,7 @@ const gameRouter = Router();
 
 gameRouter.get('/:raceId', authMiddleware, async (req: Request, res: Response) => {
     try {
+
         const role = req.user?.role;
 
         if (role !== 'admin') {
@@ -34,7 +35,7 @@ gameRouter.get('/:raceId', authMiddleware, async (req: Request, res: Response) =
         
         try {
             const response = await axios.get(apiUrl);
-            raceResults = response.data?.races?.results;
+            raceResults = response.data?.results;
             
             if (!raceResults || !Array.isArray(raceResults)) {
                 return res.status(400).json({
@@ -140,9 +141,6 @@ gameRouter.get('/:raceId', authMiddleware, async (req: Request, res: Response) =
     }
 });
 
-const getLastRaceResult = async() => {
-    const response = await axios.get('https://f1api.dev/api/current/last/race');
-    return response.data;
-}
+
 
 export default gameRouter;
