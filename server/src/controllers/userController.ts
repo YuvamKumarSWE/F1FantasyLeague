@@ -136,3 +136,24 @@ exports.login = async(req: Request, res: Response) => {
         });
     }
 }
+
+exports.logout = async (req: Request, res: Response) => {
+    try {
+        // Since JWT tokens are stateless, we just send a success response
+        // The client will handle removing the token from storage
+        return res.status(200).json({
+            success: true,
+            message: "Logout successful.",
+            data: null
+        });
+    } catch (error) {
+        console.error("Error during logout:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error. Please try again later.",
+            data: null,
+            error: error instanceof Error ? error.message : String(error)
+        });
+    }
+}
+
