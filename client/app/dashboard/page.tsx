@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 
   Clock, 
-  Calendar,
   ChevronRight,
   Target,
   LogOut,
@@ -255,10 +254,7 @@ const Dashboard: React.FC = () => {
                   <div className="text-white font-mono text-base md:text-lg">{timeLeft}</div>
                 </div>
                 
-                <div className="flex items-center space-x-2 text-gray-400">
-                  <Calendar className="h-3 w-3" />
-                  <span className="text-xs font-mono">{new Date(upcomingRace.date).toLocaleDateString()}</span>
-                </div>
+            
               </div>
             </div>
 
