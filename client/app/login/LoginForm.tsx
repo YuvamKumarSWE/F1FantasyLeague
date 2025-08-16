@@ -1,27 +1,32 @@
 'use client';
 
 import { useState } from 'react';
+import { useAuth } from '@/context/AuthContext';
 
 export default function LoginForm() {
+  const { login, loading, error } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [localError, setLocalError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    
-    // TODO: Add API call to backend
-    console.log('Login attempt:', { email, password });
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
+    setLocalError(null);
+    try {
+      await login(email, password);
+    } catch {
+      setLocalError('Invalid credentials');
+    }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {(error || localError) && (
+        <div className="text-sm text-red-400 border border-red-500/40 px-3 py-2 rounded">
+          {error || localError}
+        </div>
+      )}
+
       <div>
         <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
           Email Address
@@ -30,7 +35,8 @@ export default function LoginForm() {
           id="email"
           type="email"
           required
-          value={email}
+          autoComplete="email"
+            value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-sm text-white placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"
           placeholder="Enter your email"
@@ -45,6 +51,7 @@ export default function LoginForm() {
           id="password"
           type="password"
           required
+          autoComplete="current-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-sm text-white placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"
@@ -52,16 +59,12 @@ export default function LoginForm() {
         />
       </div>
 
-      <div className="flex items-center justify-between">
-        
-      </div>
-
       <button
         type="submit"
-        disabled={isLoading}
+        disabled={loading}
         className="w-full bg-red-600 hover:bg-red-700 disabled:bg-red-800 text-white px-8 py-3 font-semibold transition-colors flex items-center justify-center group disabled:cursor-not-allowed"
       >
-        {isLoading ? (
+        {loading ? (
           <div className="flex items-center">
             <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
             Signing In...
