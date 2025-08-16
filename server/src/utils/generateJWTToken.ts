@@ -1,24 +1,24 @@
 import jwt from 'jsonwebtoken';
-import { IUser } from '../models';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-const JWT_SECRET = process.env.JWT_SECRET as string;
+const ACCESS_SECRET = process.env.ACCESS_SECRET;
+const REFRESH_SECRET = process.env.REFRESH_SECRET;
 
-export const generateToken = (user : IUser) => {
-    if (!JWT_SECRET) {
-        throw new Error('JWT_SECRET is not defined in environment variables');
-    }
-    
-    const payload  = {
-        id: (user._id as string).toString(),
-        email: user.email
-    };
-    
-    const token = jwt.sign(payload, JWT_SECRET, {
-        expiresIn: '1h' 
-    });
-    return token;
-
+if (!ACCESS_SECRET) {
+  throw new Error('ACCESS_SECRET is not defined in environment variables');
 }
+if (!REFRESH_SECRET) {
+  throw new Error('REFRESH_SECRET is not defined in environment variables');
+}
+
+export const generateAccessToken = (userId: string) => {
+  return jwt.sign({ userId }, ACCESS_SECRET as string, { expiresIn: '1m' });
+};
+
+export const generateRefreshToken = (userId: string) => {
+  return jwt.sign({ userId }, REFRESH_SECRET as string, { expiresIn: '7d' });
+};
+
+

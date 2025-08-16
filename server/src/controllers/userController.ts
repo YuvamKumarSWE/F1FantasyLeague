@@ -1,20 +1,13 @@
 import { User } from "../models";
 import dotenv from 'dotenv';
-import { generateToken } from "../utils/generateJWTToken";
+import { generateAccessToken, generateRefreshToken  } from "../utils/generateJWTToken";
 import { Request, Response } from "express";
+import jwt from 'jsonwebtoken';
 
-const COOKIE_NAME = process.env.COOKIE_NAME || 'access_token';
+dotenv.config();
 
-function setAuthCookie(res: Response, token: string) {
-  const isProd = process.env.NODE_ENV === 'production';
-  res.cookie(COOKIE_NAME, token, {
-    httpOnly: true,        // JS can't read it → mitigates XSS token theft
-        // mitigates CSRF (plus we use JSON, not forms)
-       // cookie only over HTTPS in prod
-    path: '/',             // send on all routes
-    maxAge: 1000 * 60 * 60 , // 1h
-  });
-}
+const REFRESH_SECRET = process.env.REFRESH_SECRET as string;
+
 
 exports.signup = async (req: Request, res: Response) => {
     try {
@@ -36,7 +29,7 @@ exports.signup = async (req: Request, res: Response) => {
         // Check if user already exists
         const existingUser = await User.findOne({email: email});
         if (existingUser) {
-            return res.status(400).json({
+            return res.status(409).json({
                 success: false,
                 message: "User with this email already exists.",
                 data: null
@@ -45,7 +38,7 @@ exports.signup = async (req: Request, res: Response) => {
         // Check if username already exists
         const existingUsername = await User.findOne({username: username});
         if(existingUsername){
-            return res.status(400).json({
+            return res.status(409).json({
                 success: false,
                 message: "Username already exists. Please choose a different username.",
                 data: null
@@ -63,16 +56,10 @@ exports.signup = async (req: Request, res: Response) => {
         });
         await newUser.save();
         
-        // Generate JWT token
-        const token = generateToken(newUser);
-
-        setAuthCookie(res , token);
-        
         return res.status(201).json({
             success: true,
             message: "User signed up successfully.",
             data: {
-                id: newUser._id,
                 email: newUser.email,
                 username: newUser.username,
                 role: newUser.role,
@@ -94,7 +81,8 @@ exports.signup = async (req: Request, res: Response) => {
 
 exports.login = async(req: Request, res: Response) => {
     try {
-        const { email, password } = req.body;
+        const { email, 
+            password } = req.body;
         
         // Validate input
         if (!email || !password) {
@@ -109,9 +97,9 @@ exports.login = async(req: Request, res: Response) => {
         const user = await User.findOne({ email: email });
 
         if (!user) {
-            return res.status(404).json({
+            return res.status(401).json({
                 success: false,
-                message: "User not found.",
+                message: "Invalid credentials.",
                 data: null
             });
         }
@@ -121,27 +109,33 @@ exports.login = async(req: Request, res: Response) => {
         if (!isMatch) {
             return res.status(401).json({
                 success: false,
-                message: "Invalid password.",
+                message: "Invalid credentials.",
                 data: null
             });
         }
 
-        // Generate JWT token
-        const token = generateToken(user);
+        const accessToken = generateAccessToken((user as any)._id.toString());
+        const refreshToken = generateRefreshToken((user as any)._id.toString());
 
-        setAuthCookie(res, token);
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            path: "/api/v1/users/refresh"  // Match your actual route
+        });   
+                
 
         return res.status(200).json({
             success: true,
             message: "Login successful.",
             data: {
-                id: user._id,
                 email: user.email,
                 username: user.username,
                 role: user.role,
                 fantasyPoints: user.fantasyPoints,
                 money: user.money
-            }
+            },
+            accessToken: accessToken,
         });
     }
     catch (error) {
@@ -157,7 +151,7 @@ exports.login = async(req: Request, res: Response) => {
 
 exports.logout = async (req: Request, res: Response) => {
     try {
-        res.clearCookie(COOKIE_NAME, { path: '/' });
+        res.clearCookie('refreshToken');
         return res.status(200).json({
             success: true,
             message: "Logout successful.",
@@ -184,3 +178,23 @@ exports.me = async (req: Request, res: Response) => {
     data: { user: { id: _id, email, username, role, createdAt } },
   });
 };
+
+
+exports.refresh = async (req: Request, res: Response) => {
+    try {
+        const token = req.cookies.refreshToken;
+        if (!token) {
+            return res.status(401).json({ message: "No refresh token" });
+        }
+
+        const decoded = jwt.verify(token, REFRESH_SECRET) as any;
+        const accessToken = generateAccessToken(decoded.userId);
+        
+        return res.json({ accessToken });
+    } catch (error) {
+        return res.status(401).json({
+            success: false,
+            message: 'Invalid refresh token'
+        });
+    }
+}

@@ -1,55 +1,52 @@
-import express, {Request, Response, NextFunction} from 'express';
-import jwt from 'jsonwebtoken';
-import { User, IUser } from '../models';
+import { Request, Response, NextFunction } from 'express';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import { User, IUser } from '../models';
 
 dotenv.config();
 
-declare global{
-    namespace Express {
-        interface Request {
-            user?: IUser; 
-        }
+declare global {
+  namespace Express {
+    interface Request {
+      user?: IUser;
     }
+  }
 }
 
-const JWT_SECRET = process.env.JWT_SECRET as string;
-const COOKIE_NAME = process.env.COOKIE_NAME || 'access_token';
+const ACCESS_SECRET = process.env.ACCESS_SECRET;
 
-
-export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-    try{
-        const token = req.cookies?.[COOKIE_NAME];
-        if (!token) {
-            res.status(401).json({
-                success: false,
-                message: 'Not authenticated (missing token).',
-                data: null,
-            });
-            return;
-        }
-
-        const decoded = jwt.verify(token, JWT_SECRET) as {id: string};
-        const user = await User.findById(decoded.id).select('_id email username role createdAt');
-        if (!user) {
-        return res.status(401).json({
-            success: false,
-            message: 'User not found for token.',
-            data: null,
-        });
-        }
-
-        req.user = user;
-        return next();
-
-    }
-    catch (error) {
-        res.status(401).json({
-            success: false,
-            message: "Invalid or expired token.",
-            data: null,
-            error: error instanceof Error ? error.message : String(error)
-        });
-        return;
-    }
+if (!ACCESS_SECRET) {
+  throw new Error('ACCESS_SECRET is not defined in environment variables');
 }
+
+export const authMiddleware = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if (!token) {
+    res.status(401).json({ message: "No token provided" });
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(token, ACCESS_SECRET) as JwtPayload;
+    
+    if (!decoded.userId) {
+      res.status(401).json({ message: "Invalid token payload" });
+      return;
+    }
+
+    // Fetch the actual user from database
+    const user = await User.findById(decoded.userId);
+    if (!user) {
+      res.status(401).json({ message: "User not found" });
+      return;
+    }
+
+    req.user = user;
+    next();
+  } catch (err) {
+    res.status(401).json({ message: "Invalid or expired token" });
+    return;
+  }
+};
