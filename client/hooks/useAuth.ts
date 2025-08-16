@@ -44,6 +44,7 @@ export function useAuth() {
   async function logout() {
     await apiLogout();
     setUser(null);
+    
     // Optionally redirect to login page
     if (typeof window !== 'undefined') {
       window.location.href = '/login';
