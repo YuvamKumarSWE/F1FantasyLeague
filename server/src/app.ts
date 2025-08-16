@@ -4,6 +4,8 @@ import { connectDb } from './config/db';
 import helmet from 'helmet';
 import cors from 'cors';
 import morgan from 'morgan';
+import cookieParser from "cookie-parser";
+import rateLimit from "express-rate-limit";
 
 import driverRouter from './routes/driverRouter';
 import constructorRouter from './routes/constructorRouter';
@@ -20,12 +22,16 @@ dotenv.config();
 const app: Application = express();
 const PORT = process.env.PORT || 5000;
 
+// Trust proxy setting - should be set early
+app.set("trust proxy", 1);
+
 // Middleware
 // Parses incoming JSON requests and makes the data available in req.body
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: "100kb" }));
+app.use(express.urlencoded({ extended: true, limit: "100kb" }));
 // Adds security headers to protect against common vulnerabilities (XSS, clickjacking, etc.)
 app.use(helmet());
+app.use(cookieParser());
 // Enables Cross-Origin Resource Sharing - allows frontend from different domains to access this API
 app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:3000', // Specific origin, not wildcard
@@ -33,6 +39,7 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 200 }));
 // Logs HTTP requests to the console for debugging and monitoring
 app.use(morgan('dev'));
 
@@ -47,7 +54,7 @@ app.get('/', (req: Request, res: Response) => {               // For type safety
 app.use('/api/v1/drivers' , driverRouter);
 app.use('/api/v1/constructors', constructorRouter);
 app.use('/api/v1/races', raceRouter);
-app.use('/api/v1/users', userRouter); // Changed from 'user' to 'users' to match frontend
+app.use('/api/v1/users', userRouter); 
 app.use('/api/v1/standings', standingRouter);
 app.use('/api/v1/ft', fantasyTeamRouter);
 app.use('/api/v1/results', resultRouter);

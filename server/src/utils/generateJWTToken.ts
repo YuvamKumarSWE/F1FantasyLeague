@@ -17,7 +17,7 @@ export const generateToken = (user : IUser) => {
     };
     
     const token = jwt.sign(payload, JWT_SECRET, {
-        expiresIn: '12h' 
+        expiresIn: '1h' 
     });
     return token;
 

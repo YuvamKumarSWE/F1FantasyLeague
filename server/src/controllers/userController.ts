@@ -1,6 +1,20 @@
 import { User } from "../models";
+import dotenv from 'dotenv';
 import { generateToken } from "../utils/generateJWTToken";
 import { Request, Response } from "express";
+
+const COOKIE_NAME = process.env.COOKIE_NAME || 'access_token';
+
+function setAuthCookie(res: Response, token: string) {
+  const isProd = process.env.NODE_ENV === 'production';
+  res.cookie(COOKIE_NAME, token, {
+    httpOnly: true,        // JS can't read it → mitigates XSS token theft
+        // mitigates CSRF (plus we use JSON, not forms)
+       // cookie only over HTTPS in prod
+    path: '/',             // send on all routes
+    maxAge: 1000 * 60 * 60 , // 1h
+  });
+}
 
 exports.signup = async (req: Request, res: Response) => {
     try {
@@ -9,6 +23,7 @@ exports.signup = async (req: Request, res: Response) => {
             username,
             password
         } = req.body;
+
         // Validate input
         if (!email || !username || !password) {
             return res.status(400).json({
@@ -50,10 +65,12 @@ exports.signup = async (req: Request, res: Response) => {
         
         // Generate JWT token
         const token = generateToken(newUser);
+
+        setAuthCookie(res , token);
         
         return res.status(201).json({
             success: true,
-            message: "User created successfully.",
+            message: "User signed up successfully.",
             data: {
                 id: newUser._id,
                 email: newUser.email,
@@ -61,8 +78,7 @@ exports.signup = async (req: Request, res: Response) => {
                 role: newUser.role,
                 fantasyPoints: newUser.fantasyPoints,
                 money: newUser.money
-            },
-            token: token
+            }
         });
     } catch (error) {
         
@@ -112,6 +128,9 @@ exports.login = async(req: Request, res: Response) => {
 
         // Generate JWT token
         const token = generateToken(user);
+
+        setAuthCookie(res, token);
+
         return res.status(200).json({
             success: true,
             message: "Login successful.",
@@ -122,8 +141,7 @@ exports.login = async(req: Request, res: Response) => {
                 role: user.role,
                 fantasyPoints: user.fantasyPoints,
                 money: user.money
-            },
-            token: token
+            }
         });
     }
     catch (error) {
@@ -139,8 +157,7 @@ exports.login = async(req: Request, res: Response) => {
 
 exports.logout = async (req: Request, res: Response) => {
     try {
-        // Since JWT tokens are stateless, we just send a success response
-        // The client will handle removing the token from storage
+        res.clearCookie(COOKIE_NAME, { path: '/' });
         return res.status(200).json({
             success: true,
             message: "Logout successful.",
@@ -157,3 +174,13 @@ exports.logout = async (req: Request, res: Response) => {
     }
 }
 
+exports.me = async (req: Request, res: Response) => {
+  if (!req.user) {
+    return res.status(401).json({ success: false, message: 'Not authenticated', data: null });
+  }
+  const { _id, email, username, role, createdAt } = req.user;
+  return res.json({
+    success: true,
+    data: { user: { id: _id, email, username, role, createdAt } },
+  });
+};
