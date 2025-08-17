@@ -1,6 +1,30 @@
 import Navbar from '../components/Navbar';
+import { useState, useEffect } from 'react';
+import { constructorService } from '../services/constructorService';
+
 
 function Constructors() {
+  const [constructors, setConstructors] = useState([]);
+
+  useEffect(() => {
+    const fetchConstructors = async () => {
+      try {
+        const result = await constructorService.getAllConstructors();
+        if(result.success){
+          setConstructors(result.data);
+        } 
+        else {
+          console.error('Error fetching constructors:', result.message || 'Failed to fetch constructors');
+        }
+
+      } catch (error) {
+        console.error('Error fetching constructors:', error);
+      }
+    };
+
+    fetchConstructors();
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar />
@@ -9,29 +33,20 @@ function Constructors() {
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Constructors</h1>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[
-            { name: "Red Bull Racing", price: "$30.0M", points: 525, drivers: ["Max Verstappen", "Sergio Pérez"] },
-            { name: "Mercedes", price: "$28.5M", points: 490, drivers: ["Lewis Hamilton", "George Russell"] },
-            { name: "Ferrari", price: "$27.0M", points: 475, drivers: ["Charles Leclerc", "Carlos Sainz"] },
-            { name: "McLaren", price: "$25.5M", points: 420, drivers: ["Lando Norris", "Oscar Piastri"] },
-            { name: "Aston Martin", price: "$22.0M", points: 385, drivers: ["Fernando Alonso", "Lance Stroll"] },
-            { name: "Alpine", price: "$18.5M", points: 245, drivers: ["Pierre Gasly", "Esteban Ocon"] },
-          ].map((constructor, index) => (
+          {constructors.map((constructor, index) => (
             <div key={index} className="bg-white rounded-lg shadow p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-2">{constructor.name}</h3>
               <div className="space-y-2 text-sm text-gray-600 mb-4">
-                <p><strong>Price:</strong> {constructor.price}</p>
-                <p><strong>Points:</strong> {constructor.points}</p>
-                <p><strong>Drivers:</strong></p>
-                <ul className="ml-4">
-                  {constructor.drivers.map((driver, idx) => (
-                    <li key={idx}>• {driver}</li>
-                  ))}
-                </ul>
+                <p><strong>Nationality:</strong> {constructor.nationality}</p>
+                <p><strong>Constructor Championships:</strong> {
+                constructor.constructorsChampionships == null ? 0 : constructor.constructorsChampionships
+                }</p>
+                <p><strong>Drivers Championships:</strong> {
+                  constructor.driversChampionships == null ? 0 : constructor.driversChampionships
+                }</p>
+
               </div>
-              <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors">
-                Select Constructor
-              </button>
+            
             </div>
           ))}
         </div>

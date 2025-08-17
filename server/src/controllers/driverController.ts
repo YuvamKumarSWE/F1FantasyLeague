@@ -6,7 +6,7 @@ exports.getAllDrivers = async (req: Request, res: Response) => {
         const { 
             sortBy = 'number', 
             sortOrder = 'asc'
-        } = req.body || {};
+        } = req.query; // Changed from req.body to req.query
 
         // Validate sort field
         const validSortFields = ['driverId', 'name', 'surname', 'shortName', 'teamId', 'number', 'nationality'];
