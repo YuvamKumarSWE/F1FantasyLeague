@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // lib/auth.ts
-import { api, setAccessToken } from './api';
+import { api, setAccessToken, getAccessToken } from './api';
 
 export interface User {
   id: string;
@@ -67,6 +67,7 @@ export async function logout() {
 
 export async function getCurrentUser() {
   try {
+    console.log("Checking current user with token:", getAccessToken() ? "Present" : "Missing");
     const response = await api.post('/users/me');
     
     // If we successfully get the user, set the auth cookie (in case it wasn't set)
@@ -74,6 +75,7 @@ export async function getCurrentUser() {
       document.cookie = "isAuthenticated=true; path=/; max-age=604800"; // 7 days
     }
     
+    console.log("User data retrieved");
     return { success: true, user: response.data.data.user };
   } catch (error: any) {
     // If we can't get the user, clear the auth cookie
@@ -81,6 +83,7 @@ export async function getCurrentUser() {
       document.cookie = "isAuthenticated=false; path=/; max-age=0";
     }
     
+    console.error("Failed to get current user:", error.response?.data || error.message);
     return { 
       success: false, 
       error: error.response?.data?.message || 'Failed to get user' 

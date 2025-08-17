@@ -12,14 +12,40 @@ export const api = axios.create({
   },
 });
 
-// Store access token in memory
+// Store access token in memory and localStorage if available
 let accessToken: string | null = null;
-let isRefreshing = false; // Add flag to prevent multiple refresh attempts
+let isRefreshing = false;
+
+// Try to load token from localStorage on initialization
+if (typeof window !== 'undefined') {
+  try {
+    const storedToken = localStorage.getItem('accessToken');
+    if (storedToken) {
+      accessToken = storedToken;
+    }
+  } catch (e) {
+    console.error('Failed to load token from localStorage', e);
+  }
+}
 
 export const setAccessToken = (token: string | null) => {
   accessToken = token;
+  
+  // Also store in localStorage if available
+  if (typeof window !== 'undefined') {
+    try {
+      if (token) {
+        localStorage.setItem('accessToken', token);
+      } else {
+        localStorage.removeItem('accessToken');
+      }
+    } catch (e) {
+      console.error('Failed to save token to localStorage', e);
+    }
+  }
 };
 
+// Add this function to export
 export const getAccessToken = () => accessToken;
 
 // Request interceptor - automatically add token to requests
@@ -83,3 +109,14 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+export const fetchDrivers = async () => {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/drivers`);
+    if (!response.ok) throw new Error('Failed to fetch drivers');
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching drivers:', error);
+    throw error;
+  }
+};

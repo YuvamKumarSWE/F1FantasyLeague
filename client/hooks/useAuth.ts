@@ -18,19 +18,29 @@ export function useAuth() {
   }, []);
 
   async function checkAuth() {
-    const result = await getCurrentUser();
-    if (result.success) {
-      setUser(result.user);
+    try {
+      const result = await getCurrentUser();
+      if (result.success) {
+        setUser(result.user);
+      }
+    } catch (error) {
+      console.error("Auth check failed:", error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   async function login(email: string, password: string) {
-    const result = await apiLogin(email, password);
-    if (result.success) {
-      setUser(result.user);
+    try {
+      const result = await apiLogin(email, password);
+      if (result.success) {
+        setUser(result.user);
+      }
+      return result;
+    } catch (error) {
+      console.error("Login error:", error);
+      return { success: false, error: "Login failed" };
     }
-    return result;
   }
 
   async function signup(email: string, username: string, password: string) {

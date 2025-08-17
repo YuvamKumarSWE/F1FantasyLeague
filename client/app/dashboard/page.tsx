@@ -1,7 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, {  } from 'react';
 import Link from 'next/link';
+import { useAuth } from '@/hooks/useAuth';
+
+
 import { 
   Clock, 
   ChevronRight,
@@ -32,7 +35,17 @@ interface RaceInfo {
 }
 
 const Dashboard: React.FC = () => {
-  const [timeLeft, setTimeLeft] = useState('');
+  const {user, logout, loading} = useAuth();
+  
+  // Add a loading state handler
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-white">Loading dashboard...</div>
+      </div>
+    );
+  }
+  
 
   // Mock data - replace with actual API calls
   const myTeam: Driver[] = [
@@ -67,30 +80,12 @@ const Dashboard: React.FC = () => {
     { rank: 5, name: 'McLarenMagic', points: 2045 }
   ];
 
-  useEffect(() => {
-    const updateCountdown = () => {
-      const now = new Date().getTime();
-      const deadline = new Date(upcomingRace.deadline).getTime();
-      const distance = deadline - now;
 
-      if (distance > 0) {
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        setTimeLeft(`${days}d ${hours}h ${minutes}m`);
-      } else {
-        setTimeLeft('Deadline passed');
-      }
-    };
-
-    updateCountdown();
-    const timer = setInterval(updateCountdown, 60000);
-    return () => clearInterval(timer);
-  }, [upcomingRace.deadline]);
 
   const handleLogout = () => {
     // Add logout logic here
     console.log('Logging out...');
+    logout();
   };
 
   return (
@@ -124,7 +119,7 @@ const Dashboard: React.FC = () => {
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
                 <User className="h-4 w-4 text-gray-400" />
-                <span className="text-white font-mono text-sm">{userStats.username}</span>
+                <span className="text-white font-mono text-sm">{user?.username}</span>
               </div>
               <button
                 onClick={handleLogout}
@@ -251,7 +246,7 @@ const Dashboard: React.FC = () => {
                     <Clock className="h-3 w-3 md:h-4 md:w-4 text-red-600" />
                     <span className="text-white text-xs md:text-sm font-mono uppercase tracking-wider">Deadline</span>
                   </div>
-                  <div className="text-white font-mono text-base md:text-lg">{timeLeft}</div>
+                  <div className="text-white font-mono text-base md:text-lg"></div>
                 </div>
                 
             
