@@ -1,13 +1,12 @@
 import { User } from "../models";
 import dotenv from 'dotenv';
-import { generateAccessToken, generateRefreshToken  } from "../utils/generateJWTToken";
+import { generateAccessToken } from "../utils/generateJWTToken";
 import { Request, Response } from "express";
-import jwt from 'jsonwebtoken';
+// import jwt from 'jsonwebtoken';
 
 dotenv.config();
 
-const REFRESH_SECRET = process.env.REFRESH_SECRET as string;
-
+// const REFRESH_SECRET = process.env.REFRESH_SECRET as string;
 
 exports.signup = async (req: Request, res: Response) => {
     try {
@@ -115,14 +114,14 @@ exports.login = async(req: Request, res: Response) => {
         }
 
         const accessToken = generateAccessToken((user as any)._id.toString());
-        const refreshToken = generateRefreshToken((user as any)._id.toString());
+        // const refreshToken = generateRefreshToken((user as any)._id.toString());
 
-        res.cookie("refreshToken", refreshToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
-            path: "/api/v1/users/refresh"  // Match your actual route
-        });   
+        // res.cookie("refreshToken", refreshToken, {
+        //     httpOnly: true,
+        //     secure: process.env.NODE_ENV === "production",
+        //     sameSite: "strict",
+        //     path: "/api/v1/users/refresh"  // Match your actual route
+        // });   
                 
 
         return res.status(200).json({
@@ -151,7 +150,7 @@ exports.login = async(req: Request, res: Response) => {
 
 exports.logout = async (req: Request, res: Response) => {
     try {
-        res.clearCookie('refreshToken');
+        // res.clearCookie('refreshToken');
         return res.status(200).json({
             success: true,
             message: "Logout successful.",
@@ -179,22 +178,21 @@ exports.me = async (req: Request, res: Response) => {
   });
 };
 
+// exports.refresh = async (req: Request, res: Response) => {
+//     try {
+//         const token = req.cookies.refreshToken;
+//         if (!token) {
+//             return res.status(401).json({ message: "No refresh token" });
+//         }
 
-exports.refresh = async (req: Request, res: Response) => {
-    try {
-        const token = req.cookies.refreshToken;
-        if (!token) {
-            return res.status(401).json({ message: "No refresh token" });
-        }
-
-        const decoded = jwt.verify(token, REFRESH_SECRET) as any;
-        const accessToken = generateAccessToken(decoded.userId);
+//         const decoded = jwt.verify(token, REFRESH_SECRET) as any;
+//         const accessToken = generateAccessToken(decoded.userId);
         
-        return res.json({ accessToken });
-    } catch (error) {
-        return res.status(401).json({
-            success: false,
-            message: 'Invalid refresh token'
-        });
-    }
-}
+//         return res.json({ accessToken });
+//     } catch (error) {
+//         return res.status(401).json({
+//             success: false,
+//             message: 'Invalid refresh token'
+//         });
+//     }
+// }

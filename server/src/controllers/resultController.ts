@@ -1,17 +1,33 @@
 import { Request, Response } from 'express';
 import axios from 'axios';
+import { Race } from '../models';
 
 // Get results for a specific race from external API
 export const getRaceResults = async (req: Request, res: Response) => {
     try {
-        const { year, round } = req.params;
+        const { raceId } = req.params;
         
-        if (!year || !round) {
+        if (!raceId) {
             return res.status(400).json({
                 success: false,
-                message: 'Year and round parameters are required'
+                message: 'Race ID parameter is required',
+                data: []
             });
         }
+        
+        // Find the race document by raceId
+        const race = await Race.findOne({ raceId: raceId });
+        
+        if (!race) {
+            return res.status(404).json({
+                success: false,
+                message: 'Race not found',
+                data: []
+            });
+        }
+        
+        // Extract year and round from the race document
+        const { year, round } = race;
         
         const apiUrl = `https://f1api.dev/api/${year}/${round}/race`;
         const response = await axios.get(apiUrl);
@@ -19,20 +35,24 @@ export const getRaceResults = async (req: Request, res: Response) => {
         if (!response.data || !response.data.races) {
             return res.status(404).json({
                 success: false,
-                message: 'Race results not found'
+                message: 'Race results not found',
+                data: []
             });
         }
         
         return res.status(200).json({
             success: true,
-            data: response.data
+            message: 'Race results fetched successfully',
+            data: response.data,
+            count: 1
         });
     } catch (error) {
         console.error('Error fetching race results:', error);
         return res.status(500).json({
             success: false,
             message: 'Error fetching race results from external API',
-            error: error instanceof Error ? error.message : String(error)
+            error: error instanceof Error ? error.message : String(error),
+            data: []
         });
     }
 };
@@ -77,14 +97,29 @@ export const calculateFantasyPoints = (result: any, isCaptain: boolean = false):
 // Get all drivers' fantasy points for a specific race
 export const getAllDriversFantasyPoints = async (req: Request, res: Response) => {
     try {
-        const { year, round } = req.params;
+        const { raceId } = req.params;
         
-        if (!year || !round) {
+        if (!raceId) {
             return res.status(400).json({
                 success: false,
-                message: 'Year and round parameters are required'
+                message: 'Race ID parameter is required',
+                data: []
             });
         }
+        
+        // Find the race document by raceId
+        const race = await Race.findOne({ raceId: raceId });
+        
+        if (!race) {
+            return res.status(404).json({
+                success: false,
+                message: 'Race not found',
+                data: []
+            });
+        }
+        
+        // Extract year and round from the race document
+        const { year, round } = race;
         
         // Get race results from external API
         const apiUrl = `https://f1api.dev/api/${year}/${round}/race`;
@@ -93,7 +128,8 @@ export const getAllDriversFantasyPoints = async (req: Request, res: Response) =>
         if (!response.data?.races?.results) {
             return res.status(404).json({
                 success: false,
-                message: 'Race results not found'
+                message: 'Race results not found',
+                data: []
             });
         }
         
@@ -117,12 +153,15 @@ export const getAllDriversFantasyPoints = async (req: Request, res: Response) =>
         
         return res.status(200).json({
             success: true,
+            message: 'Fantasy points calculated successfully',
             data: {
+                raceId,
                 year,
                 round,
                 raceName: response.data.races.raceName,
                 driversFantasyPoints
-            }
+            },
+            count: driversFantasyPoints.length
         });
         
     } catch (error) {
@@ -130,7 +169,8 @@ export const getAllDriversFantasyPoints = async (req: Request, res: Response) =>
         return res.status(500).json({
             success: false,
             message: 'Error calculating fantasy points for all drivers',
-            error: error instanceof Error ? error.message : String(error)
+            error: error instanceof Error ? error.message : String(error),
+            data: []
         });
     }
 };

@@ -1,6 +1,6 @@
 import {Request,Response} from 'express';
 import axios from 'axios';
-import { FantasyTeam, Driver } from '../models';
+import { FantasyTeam, Driver, Race } from '../models';
 import mongoose from 'mongoose';
 
 // Team composition validation function
@@ -39,14 +39,9 @@ const validateTeamComposition = async (drivers: any[]): Promise<{ valid: boolean
     }
 };
 
-
-
-
 exports.createTeam = async(req: Request, res: Response) => {
     try {
-
         const TOTAL_BUDGET = 100;
-
         const userId = req.user?._id;
         
         // Add validation for req.body
@@ -75,20 +70,8 @@ exports.createTeam = async(req: Request, res: Response) => {
             });
         }
 
-        // Validate raceId is a valid ObjectId
-        if (!mongoose.Types.ObjectId.isValid(raceId)) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid raceId format.'
-            });
-        }
-
-        // Check if the requested race matches the next race
-        const nextRaceData = await getNextRace();
-        const nextRaceId = nextRaceData?.raceId;
-        
-        // Find the race document to get its raceId
-        const raceDocument = await mongoose.model('Race').findById(raceId);
+        // Find the race document by raceId (e.g., "dutch_2025")
+        const raceDocument = await Race.findOne({ raceId: raceId });
         if (!raceDocument) {
             return res.status(400).json({
                 success: false,
@@ -96,6 +79,10 @@ exports.createTeam = async(req: Request, res: Response) => {
             });
         }
 
+        // Check if the requested race matches the next race
+        const nextRaceData = await getNextRace();
+        const nextRaceId = nextRaceData?.raceId;
+        
         // Compare the race's raceId with the next race from API
         if (raceDocument.raceId !== nextRaceId) {
             return res.status(400).json({
@@ -170,7 +157,6 @@ exports.createTeam = async(req: Request, res: Response) => {
         }
 
         const objectIds = drivers.map(driver => new mongoose.Types.ObjectId(driver));
-
         const docs = await Driver.find({ _id: { $in: objectIds } });
 
         let totalCost = 0;
@@ -185,8 +171,8 @@ exports.createTeam = async(req: Request, res: Response) => {
             });
         }
         
-        // Check if team already exists for this user
-        const existingTeam = await FantasyTeam.findOne({ user: userId , race: raceId});
+        // Check if team already exists for this user and race (using MongoDB _id)
+        const existingTeam = await FantasyTeam.findOne({ user: userId, race: raceDocument._id });
         if (existingTeam) {
             return res.status(400).json({
                 success: false,
@@ -194,10 +180,10 @@ exports.createTeam = async(req: Request, res: Response) => {
             });
         }
         
-        // Create new fantasy team
+        // Create new fantasy team (using MongoDB _id for the race field)
         const newTeam = new FantasyTeam({
             user: userId,
-            race: raceId,
+            race: raceDocument._id,
             drivers: drivers,
             captain: captain || null,
             points: 0,
@@ -208,18 +194,22 @@ exports.createTeam = async(req: Request, res: Response) => {
         await newTeam.save();
 
         return res.status(200).json({
-            message: 'Fantasy team can be created.',
-            userId,
-            lockDate: lockTime,
-            currentDate,
-            totalCost,
-            team: {
-                id: newTeam._id,
-                drivers: newTeam.drivers,
-                captain: newTeam.captain,
-                points: newTeam.points,
-                locked: newTeam.locked,
-                createdAt: newTeam.createdAt
+            success: true,
+            message: 'Fantasy team created successfully.',
+            data: {
+                userId,
+                raceId: raceDocument.raceId,
+                lockDate: lockTime,
+                currentDate,
+                totalCost,
+                team: {
+                    id: newTeam._id,
+                    drivers: newTeam.drivers,
+                    captain: newTeam.captain,
+                    points: newTeam.points,
+                    locked: newTeam.locked,
+                    createdAt: newTeam.createdAt
+                }
             }
         });
 
@@ -227,43 +217,99 @@ exports.createTeam = async(req: Request, res: Response) => {
         console.error('Failed to create fantasy team:', err);
         const errorMessage = err instanceof Error ? err.message : 'Unknown error';
         return res.status(500).json({
+            success: false,
             message: 'Failed to create fantasy team',
             error: errorMessage
         });
     }
 }
 
-exports.getTeam = async(req: Request, res:Response) => {
+exports.getTeam = async(req: Request, res: Response) => {
     try {
         const userId = req.user?._id;
-        const raceId = req.params.raceId;
+        const { raceId } = req.params; // This is now "dutch_2025" format
+        
         if (!userId || !raceId) {
             return res.status(400).json({
                 success: false,
-                message : "No userId or raceId"
+                message: "userId and raceId are required"
             });
         }
 
-        const result = await FantasyTeam.findOne({user: userId, race: raceId})
+        // Find the race document by raceId (e.g., "dutch_2025")
+        const raceDocument = await Race.findOne({ raceId: raceId });
+        if (!raceDocument) {
+            return res.status(404).json({
+                success: false,
+                message: 'Race not found'
+            });
+        }
+
+        // Find the fantasy team using the race's MongoDB _id
+        const result = await FantasyTeam.findOne({ user: userId, race: raceDocument._id })
             .populate('drivers')
             .populate('captain')
             .populate('race')
             .exec();
 
+        if (!result) {
+            return res.status(404).json({
+                success: false,
+                message: 'Fantasy team not found for this race',
+                data: null
+            });
+        }
+
         return res.status(200).json({
             success: true,
-            team: result
+            message: 'Fantasy team fetched successfully',
+            data: result
         });
     }
     catch(err){
-        console.log('Error' + err);
+        console.log('Error fetching fantasy team:', err);
         return res.status(500).json({
             success: false,
-            message : err
+            message: 'Error fetching fantasy team',
+            error: err instanceof Error ? err.message : String(err)
         });
-
     }
+}
 
+exports.getUserTeams = async(req: Request, res: Response) => {
+    try {
+        const userId = req.user?._id;
+        
+        if (!userId) {
+            return res.status(400).json({
+                success: false,
+                message: "User ID is required"
+            });
+        }
+
+        // Find all fantasy teams for the authenticated user
+        const teams = await FantasyTeam.find({ user: userId })
+            .populate('drivers')
+            .populate('captain')
+            .populate('race')
+            .sort({ createdAt: -1 }) // Sort by newest first
+            .exec();
+
+        return res.status(200).json({
+            success: true,
+            message: 'User fantasy teams fetched successfully',
+            count: teams.length,
+            data: teams
+        });
+    }
+    catch(err){
+        console.log('Error fetching user fantasy teams:', err);
+        return res.status(500).json({
+            success: false,
+            message: 'Error fetching user fantasy teams',
+            error: err instanceof Error ? err.message : String(err)
+        });
+    }
 }
 
 // Helper function to get next race data

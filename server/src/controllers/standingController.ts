@@ -13,6 +13,7 @@ exports.getStandings = async (req: Request, res: Response) => {
     const data = response.data.drivers_championship;
     res.status(200).json({
         success: true,
+        message: 'Standings loaded correctly',
         data: data
     });
 

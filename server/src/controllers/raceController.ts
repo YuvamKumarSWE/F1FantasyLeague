@@ -10,7 +10,7 @@ exports.getRaces = async (req: Request, res: Response) => {
       return res.status(400).json({
         success: false,
         message: "Invalid year parameter",
-        data: null
+        data: []
       });
     }
 
@@ -23,20 +23,15 @@ exports.getRaces = async (req: Request, res: Response) => {
       return res.status(404).json({
         success: false,
         message: `No races found for year ${yearNumber}`,
-        data: {
-          races: [],
-          count: 0,
-          filters: { year: yearNumber }
-        }
+        data: []
       });
     }
 
     return res.status(200).json({
       success: true,
       message: "Races fetched successfully",
-      count: result.length,
-      filters: { year: yearNumber },
       data: result,
+      count: result.length
     });
   } catch (error) {
     console.error("Error fetching races:", error);
@@ -44,13 +39,13 @@ exports.getRaces = async (req: Request, res: Response) => {
       success: false,
       message: "Error fetching races",
       error: error instanceof Error ? error.message : String(error),
-      data: null
+      data: []
     });
   }
 };
 
 // Get current race (next upcoming race)
-exports.getCurrentRace = async (req: Request, res: Response) => {
+exports.getNextRace = async (req: Request, res: Response) => {
   try {
     const now = new Date();
     const currentRace = await Race.findOne({
@@ -61,14 +56,15 @@ exports.getCurrentRace = async (req: Request, res: Response) => {
       return res.status(404).json({
         success: false,
         message: 'No upcoming races found',
-        data: null
+        data: []
       });
     }
 
     return res.status(200).json({
       success: true,
       message: 'Current race fetched successfully',
-      data: currentRace
+      data: currentRace,
+      count: 1
     });
   } catch (error) {
     console.error("Error fetching current race:", error);
@@ -76,7 +72,7 @@ exports.getCurrentRace = async (req: Request, res: Response) => {
       success: false,
       message: 'Error fetching current race',
       error: error instanceof Error ? error.message : String(error),
-      data: null
+      data: []
     });
   }
 };
@@ -94,7 +90,7 @@ exports.getCompletedRaces = async (req: Request, res: Response) => {
       return res.status(400).json({
         success: false,
         message: "Invalid year parameter",
-        data: null
+        data: []
       });
     }
 
@@ -108,8 +104,8 @@ exports.getCompletedRaces = async (req: Request, res: Response) => {
     return res.status(200).json({
       success: true,
       message: 'Completed races fetched successfully',
-      count: completedRaces.length,
-      data: completedRaces
+      data: completedRaces,
+      count: completedRaces.length
     });
   } catch (error) {
     console.error("Error fetching completed races:", error);
@@ -117,7 +113,7 @@ exports.getCompletedRaces = async (req: Request, res: Response) => {
       success: false,
       message: 'Error fetching completed races',
       error: error instanceof Error ? error.message : String(error),
-      data: null
+      data: []
     });
   }
 };
@@ -135,7 +131,7 @@ exports.getUpcomingRaces = async (req: Request, res: Response) => {
       return res.status(400).json({
         success: false,
         message: "Invalid year parameter",
-        data: null
+        data: []
       });
     }
 
@@ -149,8 +145,8 @@ exports.getUpcomingRaces = async (req: Request, res: Response) => {
     return res.status(200).json({
       success: true,
       message: 'Upcoming races fetched successfully',
-      count: upcomingRaces.length,
-      data: upcomingRaces
+      data: upcomingRaces,
+      count: upcomingRaces.length
     });
   } catch (error) {
     console.error("Error fetching upcoming races:", error);
@@ -158,7 +154,7 @@ exports.getUpcomingRaces = async (req: Request, res: Response) => {
       success: false,
       message: 'Error fetching upcoming races',
       error: error instanceof Error ? error.message : String(error),
-      data: null
+      data: []
     });
   }
 };
@@ -172,17 +168,19 @@ exports.getRaceStatus = async (req: Request, res: Response) => {
       return res.status(400).json({
         success: false,
         message: 'Race ID is required',
-        data: null
+        data: []
       });
     }
 
-    const race = await Race.findById(raceId);
+    const race = await Race.findOne({
+      raceId: raceId
+    });
     
     if (!race) {
       return res.status(404).json({
         success: false,
         message: 'Race not found',
-        data: null
+        data: []
       });
     }
 
@@ -204,17 +202,20 @@ exports.getRaceStatus = async (req: Request, res: Response) => {
       teamCreationLocked = false;
     }
     
+    const responseData = {
+      race,
+      status,
+      teamCreationLocked,
+      raceDate,
+      fp1Date,
+      currentTime: now
+    };
+    
     return res.status(200).json({
       success: true,
       message: 'Race status fetched successfully',
-      data: {
-        race,
-        status,
-        teamCreationLocked,
-        raceDate,
-        fp1Date,
-        currentTime: now
-      }
+      data: responseData,
+      count: 1
     });
   } catch (error) {
     console.error("Error fetching race status:", error);
@@ -222,7 +223,7 @@ exports.getRaceStatus = async (req: Request, res: Response) => {
       success: false,
       message: 'Error fetching race status',
       error: error instanceof Error ? error.message : String(error),
-      data: null
+      data: []
     });
   }
 };
