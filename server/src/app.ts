@@ -34,7 +34,7 @@ app.use(helmet());
 app.use(cookieParser());
 // Enables Cross-Origin Resource Sharing - allows frontend from different domains to access this API
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3000', // Specific origin, not wildcard
+  origin:  'http://localhost:5173', // Specific origin, not wildcard
   credentials: true, // Allow credentials (cookies)
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
