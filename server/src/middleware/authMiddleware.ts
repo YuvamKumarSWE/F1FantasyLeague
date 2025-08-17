@@ -24,7 +24,9 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
   const token = authHeader && authHeader.split(" ")[1];
 
   if (!token) {
-    res.status(401).json({ message: "No token provided" });
+    res.status(401).json({ 
+      success: false,
+      message: "No token provided" });
     return;
   }
 
