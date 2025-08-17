@@ -178,6 +178,53 @@ exports.me = async (req: Request, res: Response) => {
   });
 };
 
+// Add the verify function
+exports.verify = async (req: Request, res: Response) => {
+    try {
+        // The authMiddleware already validates the token and adds user to req.user
+        if (!req.user) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid or expired token",
+                data: null
+            });
+        }
+
+        // Get full user data from database
+        const user = await User.findById(req.user._id).select('-password');
+        
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+                data: null
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Token verified successfully",
+            user: {
+                id: user._id,
+                email: user.email,
+                username: user.username,
+                role: user.role,
+                fantasyPoints: user.fantasyPoints,
+                money: user.money,
+                createdAt: user.createdAt
+            }
+        });
+    } catch (error) {
+        console.error("Error during token verification:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error during token verification",
+            data: null,
+            error: error instanceof Error ? error.message : String(error)
+        });
+    }
+};
+
 // exports.refresh = async (req: Request, res: Response) => {
 //     try {
 //         const token = req.cookies.refreshToken;
