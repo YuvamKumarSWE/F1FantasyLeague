@@ -8,7 +8,6 @@ const gameRouter = Router();
 
 gameRouter.get('/:raceId', authMiddleware, async (req: Request, res: Response) => {
     try {
-
         const role = req.user?.role;
 
         if (role !== 'admin') {
@@ -18,10 +17,10 @@ gameRouter.get('/:raceId', authMiddleware, async (req: Request, res: Response) =
             });
         }
 
-        const { raceId } = req.params;
+        const { raceId } = req.params; // This is now "dutch_2025" format
 
-        // Fetch the race to validate it exists
-        const race = await Race.findById(raceId).exec();
+        // Find the race document by raceId (e.g., "dutch_2025")
+        const race = await Race.findOne({ raceId: raceId });
         if (!race) {
             return res.status(404).json({
                 success: false,
@@ -66,7 +65,7 @@ gameRouter.get('/:raceId', authMiddleware, async (req: Request, res: Response) =
             }
         }
 
-        // Fetch all fantasy teams for this race
+        // Fetch all fantasy teams for this race (using MongoDB _id)
         const teams = await FantasyTeam.find({ race: race._id }).exec();
 
         const updated: any[] = [];
@@ -140,7 +139,5 @@ gameRouter.get('/:raceId', authMiddleware, async (req: Request, res: Response) =
         });
     }
 });
-
-
 
 export default gameRouter;

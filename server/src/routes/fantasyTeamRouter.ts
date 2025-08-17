@@ -4,6 +4,7 @@ const fantasyTeamController = require('../controllers/fantasyTeamController');
 import { authMiddleware } from '../middleware/authMiddleware';
 
 router.route('/').post(authMiddleware, fantasyTeamController.createTeam);
+router.route('/me').get(authMiddleware, fantasyTeamController.getUserTeams);
 router.route('/:raceId').get(authMiddleware, fantasyTeamController.getTeam);
 
 export default router;

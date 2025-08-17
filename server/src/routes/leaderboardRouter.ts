@@ -4,7 +4,7 @@ import { authMiddleware } from '../middleware/authMiddleware';
 
 const leaderboardRouter = Router();
 
-leaderboardRouter.get('/', getLeaderboard);
+leaderboardRouter.get('/',authMiddleware, getLeaderboard);
 leaderboardRouter.get('/my-rank', authMiddleware, getUserRank);
 
 export default leaderboardRouter;

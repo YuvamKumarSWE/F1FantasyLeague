@@ -1,3 +1,4 @@
+import { authMiddleware } from '../middleware/authMiddleware';
 import express from 'express';
 const router = express.Router();
 const raceController = require('../controllers/raceController');
@@ -6,15 +7,15 @@ const raceController = require('../controllers/raceController');
 router.route('/').get(raceController.getRaces);
 
 // Get current (next upcoming) race
-router.route('/current').get(raceController.getCurrentRace);
+router.route('/next').get(authMiddleware, raceController.getNextRace);
 
 // Get completed races
-router.route('/completed').get(raceController.getCompletedRaces);
+router.route('/completed').get(authMiddleware, raceController.getCompletedRaces);
 
 // Get upcoming races
-router.route('/upcoming').get(raceController.getUpcomingRaces);
+router.route('/upcoming').get(authMiddleware, raceController.getUpcomingRaces);
 
 // Get race status by ID
-router.route('/:raceId/status').get(raceController.getRaceStatus);
+router.route('/:raceId').get(authMiddleware, raceController.getRaceStatus);
 
 export default router;
