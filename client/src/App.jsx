@@ -11,6 +11,7 @@ import FantasyTeam from './pages/FantasyTeam';
 import Races from './pages/Races';
 import Standings from './pages/Standings';
 import Leaderboard from './pages/Leaderboard';
+import RaceResults from './pages/RaceResults';
 
 function App() {
   return (
@@ -56,6 +57,11 @@ function App() {
           <Route path="/leaderboard" element={
             <ProtectedRoute>
               <Leaderboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/races/:raceId/results" element={
+            <ProtectedRoute>
+              <RaceResults />
             </ProtectedRoute>
           } />
         </Routes>

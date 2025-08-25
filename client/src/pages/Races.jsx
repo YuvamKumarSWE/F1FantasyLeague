@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import NextRace from '../components/NextRace';
 import { raceService } from '../services';
 
 function Races() {
+  const navigate = useNavigate();
   const [completedRaces, setCompletedRaces] = useState([]);
   const [upcomingRaces, setUpcomingRaces] = useState([]);
   const [allRaces, setAllRaces] = useState([]);
@@ -107,7 +109,10 @@ function Races() {
         </div>
         
         {raceStatus.status === 'completed' && (
-          <button className="w-full py-2 px-4 rounded-md bg-red-600 text-white hover:bg-red-700 transition-colors">
+          <button 
+            onClick={() => navigate(`/races/${race.raceId}/results`)}
+            className="w-full py-2 px-4 rounded-md bg-red-600 text-white hover:bg-red-700 transition-colors"
+          >
             View Full Results
           </button>
         )}
