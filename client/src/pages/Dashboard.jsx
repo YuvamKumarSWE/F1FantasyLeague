@@ -1,5 +1,6 @@
 import Navbar from '../components/Navbar';
 import UserRankCard from '../components/UserRankCard';
+import NextRace from '../components/NextRace';
 
 function Dashboard() {
   return (
@@ -35,21 +36,9 @@ function Dashboard() {
               <UserRankCard />
             </div>
             
-            {/* Next Race Details */}
-            <div className="bg-white rounded-lg shadow p-6 flex-1">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                Next Race
-              </h2>
-              <div className="space-y-2 text-gray-600">
-                <p><strong>Race:</strong> Belgian Grand Prix</p>
-                <p><strong>Circuit:</strong> Spa-Francorchamps</p>
-                <p><strong>Date:</strong> August 25, 2025</p>
-                <p><strong>Time:</strong> 15:00 CET</p>
-                <p><strong>Weather:</strong> Partly Cloudy</p>
-              </div>
-              <button className="mt-4 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors">
-                View Details
-              </button>
+            {/* Next Race Details - Using NextRace component */}
+            <div className="dashboard-next-race flex-1">
+              <NextRace />
             </div>
           </div>
         </div>
@@ -85,6 +74,34 @@ function Dashboard() {
         
         .dashboard-rank-card .text-2xl {
           font-size: 1.5rem !important;
+        }
+
+        .dashboard-next-race > div {
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .dashboard-next-race h3 {
+          font-size: 1.125rem !important;
+        }
+
+        .dashboard-next-race .space-y-3 {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .dashboard-next-race .grid {
+          gap: 0.75rem !important;
+        }
+
+        .dashboard-next-race .text-sm {
+          font-size: 0.8rem !important;
+        }
+
+        .dashboard-next-race .bg-blue-50 {
+          margin-top: auto !important;
         }
       `}</style>
     </div>
