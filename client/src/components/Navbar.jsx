@@ -17,7 +17,6 @@ function Navbar() {
     { name: 'Dashboard', path: '/dashboard' },
     { name: 'Drivers', path: '/drivers' },
     { name: 'Constructors', path: '/constructors' },
-    { name: 'Results', path: '/results' },
     { name: 'Fantasy Team', path: '/fantasy-team' },
     { name: 'Races', path: '/races' },
     { name: 'Standings', path: '/standings' },

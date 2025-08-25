@@ -7,7 +7,6 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Drivers from './pages/Drivers';
 import Constructors from './pages/Constructors';
-import Results from './pages/Results';
 import FantasyTeam from './pages/FantasyTeam';
 import Races from './pages/Races';
 import Standings from './pages/Standings';
@@ -37,11 +36,6 @@ function App() {
           <Route path="/constructors" element={
             <ProtectedRoute>
               <Constructors />
-            </ProtectedRoute>
-          } />
-          <Route path="/results" element={
-            <ProtectedRoute>
-              <Results />
             </ProtectedRoute>
           } />
           <Route path="/fantasy-team" element={
