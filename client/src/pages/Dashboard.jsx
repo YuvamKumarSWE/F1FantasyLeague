@@ -1,6 +1,7 @@
 import Navbar from '../components/Navbar';
 import UserRankCard from '../components/UserRankCard';
 import NextRace from '../components/NextRace';
+import CurrentTeam from '../components/CurrentTeam';
 
 function Dashboard() {
   return (
@@ -12,21 +13,8 @@ function Dashboard() {
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-96">
           {/* Current F1 Team - Full height left column */}
-          <div className="lg:col-span-2 bg-white rounded-lg shadow p-6 h-full">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              Current F1 Team for Next Race
-            </h2>
-            <div className="space-y-3">
-              <div className="text-gray-600">
-                <p><strong>Driver 1:</strong> Max Verstappen</p>
-                <p><strong>Driver 2:</strong> Lewis Hamilton</p>
-                <p><strong>Constructor:</strong> Red Bull Racing</p>
-                <p><strong>Budget Remaining:</strong> $5.2M</p>
-              </div>
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
-                Edit Team
-              </button>
-            </div>
+          <div className="lg:col-span-2 h-full">
+            <CurrentTeam />
           </div>
           
           {/* Right column with two equal height sections */}
