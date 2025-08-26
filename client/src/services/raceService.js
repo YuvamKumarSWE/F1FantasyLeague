@@ -1,14 +1,22 @@
-import  api  from '../lib/axios';
+import api from '../lib/axios';
 
 export const raceService = {
   // Get all races with optional year filter
   getRaces: async (year = '2025') => {
     try {
       const response = await api.get(`/races?year=${year}`);
-      return response.data;
+      return {
+        success: true,
+        data: response.data.data,
+        message: response.data.message
+      };
     } catch (error) {
       console.error('Error fetching races:', error);
-      throw error;
+      return {
+        success: false,
+        error: error.response?.data?.message || 'Failed to fetch races',
+        data: []
+      };
     }
   },
 
@@ -16,10 +24,18 @@ export const raceService = {
   getNextRace: async () => {
     try {
       const response = await api.get('/races/next');
-      return response.data;
+      return {
+        success: true,
+        data: response.data.data,
+        message: response.data.message
+      };
     } catch (error) {
       console.error('Error fetching next race:', error);
-      throw error;
+      return {
+        success: false,
+        error: error.response?.data?.message || 'Failed to fetch next race',
+        data: null
+      };
     }
   },
 
@@ -27,10 +43,18 @@ export const raceService = {
   getCompletedRaces: async (year = '2025', limit = '10') => {
     try {
       const response = await api.get(`/races/completed?year=${year}&limit=${limit}`);
-      return response.data;
+      return {
+        success: true,
+        data: response.data.data,
+        message: response.data.message
+      };
     } catch (error) {
       console.error('Error fetching completed races:', error);
-      throw error;
+      return {
+        success: false,
+        error: error.response?.data?.message || 'Failed to fetch completed races',
+        data: []
+      };
     }
   },
 
@@ -38,10 +62,18 @@ export const raceService = {
   getUpcomingRaces: async (year = '2025', limit = '5') => {
     try {
       const response = await api.get(`/races/upcoming?year=${year}&limit=${limit}`);
-      return response.data;
+      return {
+        success: true,
+        data: response.data.data,
+        message: response.data.message
+      };
     } catch (error) {
       console.error('Error fetching upcoming races:', error);
-      throw error;
+      return {
+        success: false,
+        error: error.response?.data?.message || 'Failed to fetch upcoming races',
+        data: []
+      };
     }
   },
 
@@ -49,10 +81,18 @@ export const raceService = {
   getRaceStatus: async (raceId) => {
     try {
       const response = await api.get(`/races/${raceId}`);
-      return response.data;
+      return {
+        success: true,
+        data: response.data.data,
+        message: response.data.message
+      };
     } catch (error) {
       console.error('Error fetching race status:', error);
-      throw error;
+      return {
+        success: false,
+        error: error.response?.data?.message || 'Failed to fetch race status',
+        data: null
+      };
     }
   }
 };
