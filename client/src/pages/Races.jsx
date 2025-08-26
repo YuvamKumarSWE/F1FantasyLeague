@@ -6,12 +6,9 @@ import { raceService } from '../services';
 
 function Races() {
   const navigate = useNavigate();
-  const [completedRaces, setCompletedRaces] = useState([]);
-  const [upcomingRaces, setUpcomingRaces] = useState([]);
   const [allRaces, setAllRaces] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('upcoming');
 
   useEffect(() => {
     const fetchRaces = async () => {
@@ -19,20 +16,8 @@ function Races() {
         setLoading(true);
         
         // Fetch all race data
-        const [completedResponse, upcomingResponse, allRacesResponse] = await Promise.all([
-          raceService.getCompletedRaces('2025', '10'),
-          raceService.getUpcomingRaces('2025', '10'),
-          raceService.getRaces('2025')
-        ]);
+        const allRacesResponse = await raceService.getRaces('2025');
 
-        if (completedResponse.success) {
-          setCompletedRaces(completedResponse.data);
-        }
-        
-        if (upcomingResponse.success) {
-          setUpcomingRaces(upcomingResponse.data);
-        }
-        
         if (allRacesResponse.success) {
           setAllRaces(allRacesResponse.data);
         }
@@ -102,7 +87,6 @@ function Races() {
                 {race.fastLap && (
                   <p><strong>Fastest Lap:</strong> {race.fastLap.time} ({race.fastLap.driverId.toUpperCase()})</p>
                 )}
-                
               </div>
             </div>
           )}
@@ -157,6 +141,13 @@ function Races() {
     );
   }
 
+  // Calculate completed races for progress bar
+  const completedRaces = allRaces.filter(race => {
+    const now = new Date();
+    const raceDate = race.schedule?.race ? new Date(race.schedule.race) : null;
+    return raceDate && raceDate < now;
+  });
+
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar />
@@ -169,55 +160,17 @@ function Races() {
           <NextRace />
         </div>
 
-        {/* Tab Navigation */}
+        {/* Section Header */}
         <div className="mb-6">
-          <div className="border-b border-gray-200">
-            <nav className="-mb-px flex space-x-8">
-              <button
-                onClick={() => setActiveTab('upcoming')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'upcoming'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                Upcoming Races ({upcomingRaces.length})
-              </button>
-              <button
-                onClick={() => setActiveTab('completed')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'completed'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                Completed Races ({completedRaces.length})
-              </button>
-              <button
-                onClick={() => setActiveTab('all')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'all'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                All Races ({allRaces.length})
-              </button>
-            </nav>
-          </div>
+          <h2 className="text-xl font-semibold text-gray-900">
+            All Races ({allRaces.length})
+          </h2>
+          <p className="text-gray-600 mt-1">Complete 2025 Formula 1 season calendar</p>
         </div>
 
         {/* Race Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {activeTab === 'upcoming' && upcomingRaces.map((race, index) => (
-            <RaceCard key={race.raceId || index} race={race} />
-          ))}
-          
-          {activeTab === 'completed' && completedRaces.map((race, index) => (
-            <RaceCard key={race.raceId || index} race={race} />
-          ))}
-          
-          {activeTab === 'all' && allRaces.map((race, index) => (
+          {allRaces.map((race, index) => (
             <RaceCard key={race.raceId || index} race={race} />
           ))}
         </div>

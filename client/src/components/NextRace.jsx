@@ -71,7 +71,6 @@ function NextRace() {
         <div>
           <h4 className="text-xl font-bold text-blue-600">{nextRace.raceName}</h4>
           <p className="text-gray-600">{nextRace.Circuit?.circuitName}</p>
-          <p className="text-sm text-gray-500">{nextRace.Circuit?.Location?.locality}, {nextRace.Circuit?.Location?.country}</p>
         </div>
         
         <div className="border-t pt-3">
