@@ -1,119 +1,181 @@
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
 function Landing() {
+  const [currentGradient, setCurrentGradient] = useState(0);
+  
+  const gradients = [
+    'from-slate-900 via-gray-900 to-slate-800',
+    'from-gray-900 via-slate-900 to-gray-800',
+    'from-slate-800 via-gray-900 to-slate-900'
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentGradient((prev) => (prev + 1) % gradients.length);
+    }, 8000);
+    return () => clearInterval(interval);
+  }, [gradients.length]);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-red-900 relative overflow-hidden">
-      {/* Background Pattern - Simplified */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0)`,
-          backgroundSize: '20px 20px'
-        }}></div>
+    <div className={`min-h-screen bg-gradient-to-br ${gradients[currentGradient]} relative overflow-hidden transition-all duration-[8000ms]`}>
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute inset-0 circuit-pattern"></div>
       </div>
       
-      <div className="relative flex flex-col items-center justify-center min-h-screen px-4 sm:px-6 lg:px-8">
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center mb-6">
-            <div className="w-16 h-16 bg-red-600 rounded-xl flex items-center justify-center shadow-2xl">
-              <span className="text-white text-2xl font-bold">F1</span>
-            </div>
-          </div>
-          
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-white mb-6 tracking-tight">
-            F1 Fantasy
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">
-              League
-            </span>
-          </h1>
-          
-          <p className="text-xl sm:text-2xl text-gray-300 mb-4 max-w-2xl mx-auto leading-relaxed">
-            Build your ultimate Formula 1 team and compete with friends
-          </p>
-          
-          <p className="text-gray-400 text-lg max-w-lg mx-auto">
-            Choose drivers, select constructors, and earn points based on real F1 race results
-          </p>
-        </div>
+      {/* Minimal floating elements */}
+      <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-red-500 rounded-full opacity-40 animate-pulse"></div>
+      <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-white rounded-full opacity-30 animate-pulse" style={{animationDelay: '2s'}}></div>
+      <div className="absolute bottom-1/3 left-1/5 w-1.5 h-1.5 bg-red-400 rounded-full opacity-20 animate-pulse" style={{animationDelay: '4s'}}></div>
 
-        {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 max-w-4xl w-full">
-          <div className="bg-white bg-opacity-10 backdrop-blur-lg rounded-2xl p-6 border border-white border-opacity-20 shadow-xl">
-            <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mb-4">
-              <span className="text-white text-xl">🏎️</span>
+      <div className="relative min-h-screen flex flex-col">
+        {/* Top Navigation Bar */}
+        <nav className="flex justify-between items-center p-8 max-w-7xl mx-auto w-full">
+          <div className="flex items-center">
+            <div className="w-10 h-10 bg-gradient-to-br from-red-600 to-red-500 rounded-lg flex items-center justify-center mr-3">
+              <span className="text-white text-lg font-bold font-f1">F1</span>
             </div>
-            <h3 className="text-xl font-semibold text-white mb-2">Pick Your Team</h3>
-            <p className="text-gray-300 text-sm">Select drivers and constructors within budget constraints</p>
+            <span className="text-white text-xl font-bold font-f1">FANTASY LEAGUE</span>
           </div>
           
-          <div className="bg-white bg-opacity-10 backdrop-blur-lg rounded-2xl p-6 border border-white border-opacity-20 shadow-xl">
-            <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mb-4">
-              <span className="text-white text-xl">📊</span>
-            </div>
-            <h3 className="text-xl font-semibold text-white mb-2">Real-time Scoring</h3>
-            <p className="text-gray-300 text-sm">Earn points based on actual race performance and results</p>
-          </div>
-          
-          <div className="bg-white bg-opacity-10 backdrop-blur-lg rounded-2xl p-6 border border-white border-opacity-20 shadow-xl">
-            <div className="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mb-4">
-              <span className="text-white text-xl">🏆</span>
-            </div>
-            <h3 className="text-xl font-semibold text-white mb-2">Compete & Win</h3>
-            <p className="text-gray-300 text-sm">Climb the leaderboard and prove you're the ultimate F1 strategist</p>
-          </div>
-        </div>
-
-        {/* CTA Section */}
-        <div className="bg-white bg-opacity-10 backdrop-blur-lg rounded-3xl p-8 border border-white border-opacity-20 shadow-2xl max-w-md w-full">
-          <h2 className="text-2xl font-bold text-white text-center mb-6">
-            Join the Championship
-          </h2>
-          
-          <div className="space-y-4">
-            <Link
-              to="/signup"
-              className="w-full bg-gradient-to-r from-red-600 to-red-700 text-white py-4 px-6 rounded-xl hover:from-red-700 hover:to-red-800 transition-all duration-300 block text-center font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-            >
-              Start Racing
-            </Link>
-            
+          {/* CTA in Header */}
+          <div className="hidden md:flex items-center space-x-4">
             <Link
               to="/login"
-              className="w-full bg-white bg-opacity-20 backdrop-blur-sm text-white py-4 px-6 rounded-xl hover:bg-opacity-30 transition-all duration-300 block text-center font-semibold text-lg border border-white border-opacity-30 hover:border-opacity-50"
+              className="text-gray-300 hover:text-white px-4 py-2 transition-colors duration-300 font-medium"
             >
-              Already Racing? Login
+              Sign In
+            </Link>
+            <Link
+              to="/signup"
+              className="bg-gradient-to-r from-red-600 to-red-500 text-white px-6 py-2 rounded-lg hover:from-red-700 hover:to-red-600 transition-all duration-300 font-semibold"
+            >
+              Get Started
             </Link>
           </div>
+        </nav>
+
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col items-center justify-center px-8 max-w-7xl mx-auto w-full">
           
-          <p className="text-gray-400 text-sm text-center mt-6">
-            Free to play • No credit card required
-          </p>
+          {/* Hero Section */}
+          <div className="text-center mb-16 max-w-4xl">
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-8 tracking-tight leading-tight">
+              <span className="font-f1">FORMULA 1</span>
+              <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-400 to-orange-400">
+                Fantasy Racing
+              </span>
+            </h1>
+            
+            <p className="text-xl sm:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed font-light">
+              Build your dream F1 team, compete with real race data, and prove your strategic mastery in the world's premier motorsport championship.
+            </p>
+
+            {/* Primary CTA */}
+            <div className="f1-card max-w-md mx-auto">
+              <h2 className="text-2xl font-bold text-white mb-4 font-f1">
+                JOIN THE CHAMPIONSHIP
+              </h2>
+              <p className="text-gray-300 mb-8 text-lg">
+                Start your journey to becoming the ultimate F1 fantasy champion
+              </p>
+              
+              <div className="space-y-4">
+                <Link
+                  to="/signup"
+                  className="w-full bg-gradient-to-r from-red-600 to-red-500 text-white py-4 px-8 rounded-xl hover:from-red-700 hover:to-red-600 transition-all duration-300 block text-center font-bold text-lg transform hover:-translate-y-1"
+                >
+                  START RACING
+                </Link>
+                
+                <Link
+                  to="/login"
+                  className="w-full glass text-white py-4 px-8 rounded-xl hover:bg-white/10 transition-all duration-300 block text-center font-medium text-lg border border-white/20 hover:border-white/40"
+                >
+                  Already Racing? Sign In
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* Features Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-20 w-full max-w-6xl">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m4 0v-5a2 2 0 011-1h2a2 2 0 011 1v5m-4 0h4" />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-4 font-f1">STRATEGIC TEAM BUILDING</h3>
+              <p className="text-gray-400 text-lg leading-relaxed">
+                Carefully select drivers and constructors within budget constraints. Every decision impacts your championship standing.
+              </p>
+            </div>
+            
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-green-600 to-green-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-4 font-f1">REAL-TIME DATA</h3>
+              <p className="text-gray-400 text-lg leading-relaxed">
+                Scoring based on actual Formula 1 race results, qualifying performances, and championship standings.
+              </p>
+            </div>
+            
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-4 font-f1">COMPETITIVE RACING</h3>
+              <p className="text-gray-400 text-lg leading-relaxed">
+                Compete against other fantasy managers in global leaderboards and prove your motorsport expertise.
+              </p>
+            </div>
+          </div>
+
+          {/* Stats Section */}
+          <div className="grid grid-cols-3 gap-8 text-center mb-16">
+            <div>
+              <div className="text-4xl font-bold text-white mb-2 font-f1">20+</div>
+              <div className="text-gray-400 font-medium">Elite Drivers</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-white mb-2 font-f1">10</div>
+              <div className="text-gray-400 font-medium">Constructor Teams</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-white mb-2 font-f1">24</div>
+              <div className="text-gray-400 font-medium">Race Weekends</div>
+            </div>
+          </div>
+
         </div>
 
-        {/* Stats */}
-        <div className="flex items-center justify-center space-x-8 mt-12 text-gray-400">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-white">21</div>
-            <div className="text-sm">Drivers</div>
+        {/* Footer */}
+        <footer className="py-8 border-t border-gray-800">
+          <div className="max-w-7xl mx-auto px-8 text-center">
+            <p className="text-gray-500 text-sm">
+              © 2025 F1 Fantasy League. Experience the thrill of Formula 1 team management.
+            </p>
           </div>
-          <div className="w-px h-8 bg-gray-600"></div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-white">10</div>
-            <div className="text-sm">Teams</div>
-          </div>
-          <div className="w-px h-8 bg-gray-600"></div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-white">24</div>
-            <div className="text-sm">Races</div>
-          </div>
+        </footer>
+
+        {/* Mobile CTA - visible only on mobile */}
+        <div className="md:hidden fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-gray-900 to-transparent">
+          <Link
+            to="/signup"
+            className="w-full bg-gradient-to-r from-red-600 to-red-500 text-white py-4 px-8 rounded-xl font-bold text-lg text-center block"
+          >
+            GET STARTED
+          </Link>
         </div>
       </div>
-
-      {/* Floating Elements */}
-      <div className="absolute top-20 left-10 w-4 h-4 bg-red-500 rounded-full opacity-60 animate-pulse"></div>
-      <div className="absolute top-40 right-20 w-3 h-3 bg-blue-500 rounded-full opacity-40 animate-pulse"></div>
-      <div className="absolute bottom-20 left-20 w-2 h-2 bg-yellow-500 rounded-full opacity-50 animate-pulse"></div>
-      <div className="absolute bottom-40 right-10 w-5 h-5 bg-green-500 rounded-full opacity-30 animate-pulse"></div>
     </div>
   );
 }
