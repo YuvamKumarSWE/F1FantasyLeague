@@ -193,24 +193,17 @@ exports.createTeam = async(req: Request, res: Response) => {
         
         await newTeam.save();
 
+        // Populate the team data before returning
+        const populatedTeam = await FantasyTeam.findById(newTeam._id)
+            .populate('drivers')
+            .populate('captain')
+            .populate('race')
+            .exec();
+
         return res.status(200).json({
             success: true,
             message: 'Fantasy team created successfully.',
-            data: {
-                userId,
-                raceId: raceDocument.raceId,
-                lockDate: lockTime,
-                currentDate,
-                totalCost,
-                team: {
-                    id: newTeam._id,
-                    drivers: newTeam.drivers,
-                    captain: newTeam.captain,
-                    points: newTeam.points,
-                    locked: newTeam.locked,
-                    createdAt: newTeam.createdAt
-                }
-            }
+            data: populatedTeam
         });
 
     } catch (err) {
