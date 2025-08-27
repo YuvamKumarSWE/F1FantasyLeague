@@ -42,7 +42,10 @@ function TeamCreation({ nextRace, currentTeam, onTeamCreated }) {
 
   const getDeadline = () => {
     if (!nextRace?.schedule?.fp1) return null;
-    return new Date(nextRace.schedule.fp1);
+    const fp1Date = new Date(nextRace.schedule.fp1);
+    // Set to start of day (00:00 AM) to match backend logic
+    fp1Date.setHours(0, 0, 0, 0);
+    return fp1Date;
   };
 
   const isDeadlinePassed = () => {
