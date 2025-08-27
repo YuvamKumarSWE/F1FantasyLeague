@@ -14,9 +14,10 @@ import userRouter from './routes/userRouter';
 import standingRouter from './routes/standingRouter';
 import fantasyTeamRouter from './routes/fantasyTeamRouter';
 import resultRouter from './routes/resultRoutes';
-import gameRouter from './routes/gameRouter';
 import leaderboardRouter from './routes/leaderboardRouter';
 
+// Import the scheduler
+import { startRaceResultScheduler } from './jobs/raceResultJob';
 
 dotenv.config();
 const app: Application = express();
@@ -26,28 +27,27 @@ const PORT = process.env.PORT || 5000;
 app.set("trust proxy", 1);
 
 // Middleware
-// Parses incoming JSON requests and makes the data available in req.body
 app.use(express.json({ limit: "100kb" }));
 app.use(express.urlencoded({ extended: true, limit: "100kb" }));
-// Adds security headers to protect against common vulnerabilities (XSS, clickjacking, etc.)
 app.use(helmet());
 app.use(cookieParser());
-// Enables Cross-Origin Resource Sharing - allows frontend from different domains to access this API
 app.use(cors({
-  origin:  'http://localhost:5173', // Specific origin, not wildcard
-  credentials: true, // Allow credentials (cookies)
+  origin:  'http://localhost:5173',
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 200 }));
-// Logs HTTP requests to the console for debugging and monitoring
 app.use(morgan('dev'));
 
 // Connect to MongoDB
 connectDb();
 
+// Start the race result scheduler
+startRaceResultScheduler();
+
 // Routes
-app.get('/', (req: Request, res: Response) => {               // For type safety of res and rep
+app.get('/', (req: Request, res: Response) => {
   res.send('Hello from TypeScript + Express + MongoDB!');
 });
 
@@ -60,7 +60,7 @@ app.use('/api/v1/ft', fantasyTeamRouter);
 app.use('/api/v1/results', resultRouter);
 app.use('/api/v1/leaderboard', leaderboardRouter);
 
-app.use('/api/v1/admin/game', gameRouter);
+// Remove the admin game router for security
 
 // Start server
 app.listen(PORT, () => {

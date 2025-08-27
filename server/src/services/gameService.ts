@@ -1,31 +1,15 @@
-import { Router, Request, Response } from 'express';
 import { FantasyTeam, Driver, Race, User } from '../models';
-import { authMiddleware } from '../middleware/authMiddleware';
 import { calculateFantasyPoints } from '../controllers/resultController';
 import axios from 'axios';
 
-const gameRouter = Router();
-
-gameRouter.get('/:raceId', authMiddleware, async (req: Request, res: Response) => {
+export async function processRaceResults(raceId: string) {
     try {
-        const role = req.user?.role;
-
-        if (role !== 'admin') {
-            return res.status(403).json({
-                success: false,
-                message: 'You are not the one! Ask Neo'
-            });
-        }
-
-        const { raceId } = req.params; // This is now "dutch_2025" format
+        console.log(`Processing race results for: ${raceId}`);
 
         // Find the race document by raceId (e.g., "dutch_2025")
         const race = await Race.findOne({ raceId: raceId });
         if (!race) {
-            return res.status(404).json({
-                success: false,
-                message: 'Race not found'
-            });
+            throw new Error(`Race not found: ${raceId}`);
         }
 
         // Get race results from external API using year and round
@@ -37,17 +21,10 @@ gameRouter.get('/:raceId', authMiddleware, async (req: Request, res: Response) =
             raceResults = response.data?.results;
             
             if (!raceResults || !Array.isArray(raceResults)) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'No results found for this race from external API'
-                });
+                throw new Error('No results found for this race from external API');
             }
         } catch (apiError) {
-            return res.status(400).json({
-                success: false,
-                message: 'Could not fetch race results from external API',
-                error: apiError instanceof Error ? apiError.message : String(apiError)
-            });
+            throw new Error(`Could not fetch race results from external API: ${apiError instanceof Error ? apiError.message : String(apiError)}`);
         }
 
         // Build fast lookup maps for fantasy points calculation
@@ -121,7 +98,7 @@ gameRouter.get('/:raceId', authMiddleware, async (req: Request, res: Response) =
             }
         }
 
-        return res.status(200).json({
+        return {
             success: true,
             raceId: race.raceId,
             year: race.year,
@@ -129,15 +106,9 @@ gameRouter.get('/:raceId', authMiddleware, async (req: Request, res: Response) =
             updatedTeams: updated,
             totalResultsProcessed: raceResults.length,
             apiSource: apiUrl
-        });
+        };
     } catch (err: any) {
-        console.error('[gameRouter] error calculating points', err);
-        return res.status(500).json({
-            success: false,
-            message: 'Internal server error',
-            error: err?.message
-        });
+        console.error('[gameService] error calculating points', err);
+        throw err;
     }
-});
-
-export default gameRouter;
+}
