@@ -120,9 +120,7 @@ function Login() {
                     <input type="checkbox" className="rounded border-white/20 bg-white/5 text-[#FF1801] focus:ring-[#FF1801]" />
                     <span className="text-sm text-gray-300">Remember me</span>
                   </label>
-                  <Link to="/forgot-password" className="text-sm text-[#FF1801] hover:text-red-400 transition-colors">
-                    Forgot password?
-                  </Link>
+                 
                 </div>
 
                 <button
