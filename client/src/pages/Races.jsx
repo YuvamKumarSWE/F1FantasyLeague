@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
+import Layout from '../components/Layout';
 import NextRace from '../components/NextRace';
 import { raceService } from '../services';
 
@@ -14,7 +14,7 @@ function Races() {
     const fetchRaces = async () => {
       try {
         setLoading(true);
-        
+
         // Fetch all race data
         const allRacesResponse = await raceService.getRaces('2025');
 
@@ -46,56 +46,77 @@ function Races() {
     const fp1Date = race.schedule?.fp1 ? new Date(race.schedule.fp1) : null;
 
     if (raceDate && raceDate < now) {
-      return { status: 'completed', label: 'Completed', color: 'bg-green-100 text-green-800' };
+      return { status: 'completed', label: 'Completed', color: 'bg-green-500/20 text-green-400' };
     } else if (fp1Date && fp1Date <= now) {
-      return { status: 'current', label: 'In Progress', color: 'bg-yellow-100 text-yellow-800' };
+      return { status: 'current', label: 'In Progress', color: 'bg-yellow-500/20 text-yellow-400' };
     } else {
-      return { status: 'upcoming', label: 'Upcoming', color: 'bg-blue-100 text-blue-800' };
+      return { status: 'upcoming', label: 'Upcoming', color: 'bg-blue-500/20 text-blue-400' };
     }
   };
 
   const RaceCard = ({ race }) => {
     const raceStatus = getRaceStatus(race);
-    
+
     return (
-      <div className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow">
+      <div className="group rounded-2xl border border-white/10 bg-white/[0.04] p-6 hover:bg-white/[0.08] transition-all duration-300 hover:scale-105">
         <div className="flex justify-between items-start mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">{race.raceName}</h3>
-          <span className={`px-2 py-1 rounded text-xs font-medium ${raceStatus.color}`}>
+          <h3 className="text-xl font-bold group-hover:text-[#FF1801] transition-colors">{race.raceName}</h3>
+          <span className={`px-3 py-1 rounded-full text-xs font-semibold ${raceStatus.color}`}>
             {raceStatus.label}
           </span>
         </div>
-        
-        <div className="space-y-2 text-sm text-gray-600 mb-4">
-          <p><strong>Circuit:</strong> {race.circuit?.circuitName}</p>
-          <p><strong>Location:</strong> {race.circuit?.city}, {race.circuit?.country}</p>
-          <p><strong>Round:</strong> {race.round}</p>
+
+        <div className="space-y-3 text-sm mb-6">
+          <div className="flex justify-between">
+            <span className="text-gray-400">Circuit:</span>
+            <span className="text-white">{race.circuit?.circuitName}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-gray-400">Location:</span>
+            <span className="text-white">{race.circuit?.city}, {race.circuit?.country}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-gray-400">Round:</span>
+            <span className="text-white font-semibold">{race.round}</span>
+          </div>
           {race.schedule?.race && (
-            <p><strong>Race Date:</strong> {formatDate(race.schedule.race)}</p>
+            <div className="flex justify-between">
+              <span className="text-gray-400">Race Date:</span>
+              <span className="text-white font-semibold">{formatDate(race.schedule.race)}</span>
+            </div>
           )}
-          <p><strong>Laps:</strong> {race.laps}</p>
-          
+          <div className="flex justify-between">
+            <span className="text-gray-400">Laps:</span>
+            <span className="text-white">{race.laps}</span>
+          </div>
+
           {/* Additional info for completed races */}
           {raceStatus.status === 'completed' && race.winner && (
-            <div className="mt-4 pt-4 border-t border-gray-200">
+            <div className="mt-4 pt-4 border-t border-white/10">
               <div className="space-y-2">
                 <div className="flex items-center space-x-2">
-                  <span className="text-yellow-500">🏆</span>
-                  <span><strong>Winner:</strong> {race.winner.name} {race.winner.surname}</span>
+                  <span className="text-yellow-400">🏆</span>
+                  <span className="text-white font-semibold">Winner: {race.winner.name} {race.winner.surname}</span>
                 </div>
-                <p><strong>Team:</strong> {race.teamWinner?.teamName}</p>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Team:</span>
+                  <span className="text-white">{race.teamWinner?.teamName}</span>
+                </div>
                 {race.fastLap && (
-                  <p><strong>Fastest Lap:</strong> {race.fastLap.time} ({race.fastLap.driverId.toUpperCase()})</p>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Fastest Lap:</span>
+                    <span className="text-white">{race.fastLap.time} ({race.fastLap.driverId.toUpperCase()})</span>
+                  </div>
                 )}
               </div>
             </div>
           )}
         </div>
-        
+
         {raceStatus.status === 'completed' && (
-          <button 
+          <button
             onClick={() => navigate(`/races/${race.raceId}/results`)}
-            className="w-full py-2 px-4 rounded-md bg-red-600 text-white hover:bg-red-700 transition-colors"
+            className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-[#FF1801] to-red-600 text-white hover:from-red-600 hover:to-[#FF1801] transition-all font-semibold"
           >
             View Full Results
           </button>
@@ -106,38 +127,40 @@ function Races() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100">
-        <Navbar />
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Race Calendar</h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <Layout title="Race Calendar">
+        <div className="space-y-8">
+          <div className="text-center">
+            <h1 className="text-4xl font-black mb-2">Race Calendar</h1>
+            <p className="text-gray-300">Loading 2025 season schedule...</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(6)].map((_, index) => (
-              <div key={index} className="bg-white rounded-lg shadow p-6 animate-pulse">
-                <div className="h-6 bg-gray-200 rounded w-3/4 mb-4"></div>
+              <div key={index} className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 animate-pulse">
+                <div className="h-6 bg-white/10 rounded w-3/4 mb-4"></div>
                 <div className="space-y-2 mb-4">
-                  <div className="h-4 bg-gray-200 rounded w-full"></div>
-                  <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                  <div className="h-4 bg-white/10 rounded w-full"></div>
+                  <div className="h-4 bg-white/10 rounded w-2/3"></div>
                 </div>
-                <div className="h-10 bg-gray-200 rounded"></div>
+                <div className="h-10 bg-white/10 rounded"></div>
               </div>
             ))}
           </div>
-        </main>
-      </div>
+        </div>
+      </Layout>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-100">
-        <Navbar />
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Race Calendar</h1>
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <p className="text-red-600">{error}</p>
+      <Layout title="Race Calendar">
+        <div className="text-center">
+          <h1 className="text-4xl font-black mb-2">Race Calendar</h1>
+          <div className="rounded-2xl border border-red-500/20 bg-red-500/10 p-8 max-w-md mx-auto">
+            <div className="text-red-400 text-lg font-medium mb-2">Error loading races</div>
+            <p className="text-red-300">{error}</p>
           </div>
-        </main>
-      </div>
+        </div>
+      </Layout>
     );
   }
 
@@ -149,49 +172,60 @@ function Races() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Navbar />
-      
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Race Calendar</h1>
-        
+    <Layout title="Race Calendar">
+      <div className="space-y-8">
+        {/* Header */}
+        <div className="text-center">
+          <h1 className="text-4xl font-black mb-2">Grand Prix Calendar</h1>
+          <p className="text-gray-300">Complete 2025 Formula 1 season schedule</p>
+        </div>
+
         {/* Next Race Section */}
-        <div className="mb-8">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6">
           <NextRace />
         </div>
 
         {/* Section Header */}
-        <div className="mb-6">
-          <h2 className="text-xl font-semibold text-gray-900">
-            All Races ({allRaces.length})
-          </h2>
-          <p className="text-gray-600 mt-1">Complete 2025 Formula 1 season calendar</p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h2 className="text-2xl font-bold">All Races</h2>
+            <p className="text-gray-400 mt-1">Track the entire championship</p>
+          </div>
+          <div className="text-right">
+            <div className="text-2xl font-bold text-[#FF1801]">{allRaces.length}</div>
+            <div className="text-sm text-gray-400">Total Races</div>
+          </div>
         </div>
 
         {/* Race Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {allRaces.map((race, index) => (
             <RaceCard key={race.raceId || index} race={race} />
           ))}
         </div>
 
         {/* Season Progress */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Season Progress</h2>
-          <div className="w-full bg-gray-200 rounded-full h-3">
-            <div 
-              className="bg-blue-600 h-3 rounded-full transition-all duration-500" 
-              style={{ 
-                width: `${allRaces.length > 0 ? (completedRaces.length / allRaces.length) * 100 : 0}%` 
+        <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-8">
+          <h2 className="text-2xl font-bold mb-6 text-center">Season Progress</h2>
+          <div className="w-full bg-white/10 rounded-full h-4 mb-4">
+            <div
+              className="bg-gradient-to-r from-[#FF1801] to-red-600 h-4 rounded-full transition-all duration-500"
+              style={{
+                width: `${allRaces.length > 0 ? (completedRaces.length / allRaces.length) * 100 : 0}%`
               }}
             ></div>
           </div>
-          <p className="mt-2 text-sm text-gray-600">
-            {completedRaces.length} of {allRaces.length} races completed
-          </p>
+          <div className="text-center">
+            <div className="text-lg font-semibold text-white">
+              {completedRaces.length} of {allRaces.length} races completed
+            </div>
+            <div className="text-sm text-gray-400 mt-1">
+              {Math.round((completedRaces.length / allRaces.length) * 100)}% of season complete
+            </div>
+          </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </Layout>
   );
 }
 

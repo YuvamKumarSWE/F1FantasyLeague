@@ -37,64 +37,127 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8">
-        <h2 className="text-2xl font-bold text-center mb-8 text-gray-800">
-          Login
-        </h2>
-        
-        {error && (
-          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-            {error}
-          </div>
-        )}
-        
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Enter your email"
-            />
-          </div>
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Enter your password"
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300 disabled:opacity-50"
-          >
-            {loading ? 'Logging in...' : 'Login'}
-          </button>
-        </form>
-        <p className="mt-4 text-center text-sm text-gray-600">
-          Don't have an account?{' '}
-          <Link to="/signup" className="text-blue-600 hover:text-blue-700">
-            Sign up
+    <div className="min-h-screen bg-gradient-to-b from-black via-slate-950 to-black text-white">
+      {/* Top Nav */}
+      <header className="sticky top-0 z-30 border-b border-white/10 bg-black/40 backdrop-blur">
+        <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-[#FF1801] to-red-600 grid place-items-center">
+              <span className="font-bold font-f1">F1</span>
+            </div>
+            <span className="font-f1 text-xl tracking-wide">Fantasy League</span>
           </Link>
-        </p>
+          <nav className="hidden md:flex items-center gap-2">
+            <Link to="/signup" className="btn-f1-primary">Join the Grid</Link>
+          </nav>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <div className="relative mx-auto max-w-7xl px-6 py-16">
+        <div className="mx-auto max-w-md">
+          {/* Background Effects */}
+          <div className="pointer-events-none absolute inset-0">
+            <div className="absolute -top-32 right-0 h-80 w-80 rounded-full bg-[#FF1801]/10 blur-3xl" />
+            <div className="absolute -bottom-40 -left-10 h-96 w-96 rounded-full bg-red-500/5 blur-3xl" />
+          </div>
+
+          <div className="relative">
+            {/* Header */}
+            <div className="text-center mb-8">
+              <h1 className="text-4xl font-black mb-4">Welcome Back</h1>
+              <p className="text-gray-300">Sign in to access your pit wall</p>
+            </div>
+
+            {/* Login Card */}
+            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-8 backdrop-blur-sm">
+              {error && (
+                <div className="mb-6 rounded-xl border border-red-500/20 bg-red-500/10 p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="h-5 w-5 rounded-full bg-red-500/20 flex items-center justify-center">
+                      <span className="text-xs text-red-400">!</span>
+                    </div>
+                    <p className="text-sm text-red-300">{error}</p>
+                  </div>
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <label htmlFor="email" className="block text-sm font-semibold text-gray-300 mb-2">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-gray-400 focus:border-[#FF1801] focus:outline-none focus:ring-1 focus:ring-[#FF1801] transition-colors"
+                    placeholder="Enter your email"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="password" className="block text-sm font-semibold text-gray-300 mb-2">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                    className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-gray-400 focus:border-[#FF1801] focus:outline-none focus:ring-1 focus:ring-[#FF1801] transition-colors"
+                    placeholder="Enter your password"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <label className="flex items-center gap-2">
+                    <input type="checkbox" className="rounded border-white/20 bg-white/5 text-[#FF1801] focus:ring-[#FF1801]" />
+                    <span className="text-sm text-gray-300">Remember me</span>
+                  </label>
+                  <Link to="/forgot-password" className="text-sm text-[#FF1801] hover:text-red-400 transition-colors">
+                    Forgot password?
+                  </Link>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full rounded-xl bg-gradient-to-r from-[#FF1801] to-red-600 py-3 font-semibold text-white hover:from-red-600 hover:to-[#FF1801] focus:outline-none focus:ring-2 focus:ring-[#FF1801] focus:ring-offset-2 focus:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                >
+                  {loading ? 'Signing In...' : 'Sign In'}
+                </button>
+              </form>
+            </div>
+
+            {/* Footer */}
+            <div className="mt-8 text-center">
+              <p className="text-gray-400">
+                New to the grid?{' '}
+                <Link to="/signup" className="text-[#FF1801] hover:text-red-400 font-semibold transition-colors">
+                  Create your account
+                </Link>
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
+
+      {/* Footer */}
+      <footer className="border-t border-white/10 bg-black/60 mt-16">
+        <div className="mx-auto max-w-7xl px-6 py-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <div className="h-8 w-8 rounded-md bg-gradient-to-br from-[#FF1801] to-red-600 grid place-items-center text-sm font-bold">F1</div>
+            <span className="font-f1">Fantasy League</span>
+          </div>
+          <p className="text-xs text-gray-400">© 2025 F1 Fantasy League. Built for race fans.</p>
+        </div>
+      </footer>
     </div>
   );
 }

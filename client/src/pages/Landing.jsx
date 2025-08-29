@@ -1,181 +1,173 @@
 import { Link } from 'react-router-dom';
-import { useState, useEffect } from 'react';
 
 function Landing() {
-  const [currentGradient, setCurrentGradient] = useState(0);
-  
-  const gradients = [
-    'from-slate-900 via-gray-900 to-slate-800',
-    'from-gray-900 via-slate-900 to-gray-800',
-    'from-slate-800 via-gray-900 to-slate-900'
-  ];
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentGradient((prev) => (prev + 1) % gradients.length);
-    }, 8000);
-    return () => clearInterval(interval);
-  }, [gradients.length]);
-
   return (
-    <div className={`min-h-screen bg-gradient-to-br ${gradients[currentGradient]} relative overflow-hidden transition-all duration-[8000ms]`}>
-      {/* Subtle background pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0 circuit-pattern"></div>
-      </div>
-      
-      {/* Minimal floating elements */}
-      <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-red-500 rounded-full opacity-40 animate-pulse"></div>
-      <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-white rounded-full opacity-30 animate-pulse" style={{animationDelay: '2s'}}></div>
-      <div className="absolute bottom-1/3 left-1/5 w-1.5 h-1.5 bg-red-400 rounded-full opacity-20 animate-pulse" style={{animationDelay: '4s'}}></div>
-
-      <div className="relative min-h-screen flex flex-col">
-        {/* Top Navigation Bar */}
-        <nav className="flex justify-between items-center p-8 max-w-7xl mx-auto w-full">
-          <div className="flex items-center">
-            <div className="w-10 h-10 bg-gradient-to-br from-red-600 to-red-500 rounded-lg flex items-center justify-center mr-3">
-              <span className="text-white text-lg font-bold font-f1">F1</span>
+    <div className="min-h-screen bg-gradient-to-b from-black via-slate-950 to-black text-white">
+      {/* Top Nav */}
+      <header className="sticky top-0 z-30 border-b border-white/10 bg-black/40 backdrop-blur">
+        <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-[#FF1801] to-red-600 grid place-items-center">
+              <span className="font-bold font-f1">F1</span>
             </div>
-            <span className="text-white text-xl font-bold font-f1">FANTASY LEAGUE</span>
+            <span className="font-f1 text-xl tracking-wide">Fantasy League</span>
           </div>
-          
-          {/* CTA in Header */}
-          <div className="hidden md:flex items-center space-x-4">
-            <Link
-              to="/login"
-              className="text-gray-300 hover:text-white px-4 py-2 transition-colors duration-300 font-medium"
-            >
-              Sign In
-            </Link>
-            <Link
-              to="/signup"
-              className="bg-gradient-to-r from-red-600 to-red-500 text-white px-6 py-2 rounded-lg hover:from-red-700 hover:to-red-600 transition-all duration-300 font-semibold"
-            >
-              Get Started
-            </Link>
-          </div>
-        </nav>
+          <nav className="hidden md:flex items-center gap-2">
+            <Link to="/login" className="px-4 py-2 text-gray-300 hover:text-white rounded-lg hover:bg-white/10">Sign In</Link>
+            <Link to="/signup" className="btn-f1-primary">Get Started</Link>
+          </nav>
+        </div>
+      </header>
 
-        {/* Main Content */}
-        <div className="flex-1 flex flex-col items-center justify-center px-8 max-w-7xl mx-auto w-full">
-          
-          {/* Hero Section */}
-          <div className="text-center mb-16 max-w-4xl">
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-8 tracking-tight leading-tight">
-              <span className="font-f1">FORMULA 1</span>
-              <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-400 to-orange-400">
-                Fantasy Racing
-              </span>
-            </h1>
-            
-            <p className="text-xl sm:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed font-light">
-              Build your dream F1 team, compete with real race data, and prove your strategic mastery in the world's premier motorsport championship.
-            </p>
-
-            {/* Primary CTA */}
-            <div className="f1-card max-w-md mx-auto">
-              <h2 className="text-2xl font-bold text-white mb-4 font-f1">
-                JOIN THE CHAMPIONSHIP
-              </h2>
-              <p className="text-gray-300 mb-8 text-lg">
-                Start your journey to becoming the ultimate F1 fantasy champion
-              </p>
-              
-              <div className="space-y-4">
-                <Link
-                  to="/signup"
-                  className="w-full bg-gradient-to-r from-red-600 to-red-500 text-white py-4 px-8 rounded-xl hover:from-red-700 hover:to-red-600 transition-all duration-300 block text-center font-bold text-lg transform hover:-translate-y-1"
-                >
-                  START RACING
-                </Link>
-                
-                <Link
-                  to="/login"
-                  className="w-full glass text-white py-4 px-8 rounded-xl hover:bg-white/10 transition-all duration-300 block text-center font-medium text-lg border border-white/20 hover:border-white/40"
-                >
-                  Already Racing? Sign In
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          {/* Features Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-20 w-full max-w-6xl">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m4 0v-5a2 2 0 011-1h2a2 2 0 011 1v5m-4 0h4" />
-                </svg>
-              </div>
-              <h3 className="text-2xl font-bold text-white mb-4 font-f1">STRATEGIC TEAM BUILDING</h3>
-              <p className="text-gray-400 text-lg leading-relaxed">
-                Carefully select drivers and constructors within budget constraints. Every decision impacts your championship standing.
-              </p>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-green-600 to-green-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-              </div>
-              <h3 className="text-2xl font-bold text-white mb-4 font-f1">REAL-TIME DATA</h3>
-              <p className="text-gray-400 text-lg leading-relaxed">
-                Scoring based on actual Formula 1 race results, qualifying performances, and championship standings.
-              </p>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <h3 className="text-2xl font-bold text-white mb-4 font-f1">COMPETITIVE RACING</h3>
-              <p className="text-gray-400 text-lg leading-relaxed">
-                Compete against other fantasy managers in global leaderboards and prove your motorsport expertise.
-              </p>
-            </div>
-          </div>
-
-          {/* Stats Section */}
-          <div className="grid grid-cols-3 gap-8 text-center mb-16">
-            <div>
-              <div className="text-4xl font-bold text-white mb-2 font-f1">20+</div>
-              <div className="text-gray-400 font-medium">Elite Drivers</div>
-            </div>
-            <div>
-              <div className="text-4xl font-bold text-white mb-2 font-f1">10</div>
-              <div className="text-gray-400 font-medium">Constructor Teams</div>
-            </div>
-            <div>
-              <div className="text-4xl font-bold text-white mb-2 font-f1">24</div>
-              <div className="text-gray-400 font-medium">Race Weekends</div>
-            </div>
-          </div>
-
+      {/* Hero */}
+      <section className="relative overflow-hidden">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -top-32 right-0 h-80 w-80 rounded-full bg-[#FF1801]/20 blur-3xl" />
+          <div className="absolute -bottom-40 -left-10 h-96 w-96 rounded-full bg-red-500/10 blur-3xl" />
+          <div className="absolute inset-0 opacity-10" style={{backgroundImage:'radial-gradient(circle at 20% 30%,#FF1801 0,transparent 35%), radial-gradient(circle at 80% 70%,#ffffff 0,transparent 35%)'}} />
         </div>
 
-        {/* Footer */}
-        <footer className="py-8 border-t border-gray-800">
-          <div className="max-w-7xl mx-auto px-8 text-center">
-            <p className="text-gray-500 text-sm">
-              © 2025 F1 Fantasy League. Experience the thrill of Formula 1 team management.
-            </p>
-          </div>
-        </footer>
+        <div className="relative mx-auto max-w-7xl px-6 pt-16 pb-14 lg:pt-24 lg:pb-24">
+          <div className="grid items-center gap-12 lg:grid-cols-2">
+            <div>
+              <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-gray-300">
+                <span className="inline-block h-2 w-2 rounded-full bg-[#FF1801]" /> Live race data scoring
+              </p>
+              <h1 className="text-5xl sm:text-6xl font-black leading-[1.05] tracking-tight">
+                Build. Race. <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF1801] to-orange-400">Dominate.</span>
+              </h1>
+              <p className="mt-6 text-lg text-gray-300 max-w-xl">
+                Draft your dream team with real F1 performance and watch points update across the season. Strategy wins championships.
+              </p>
+              <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                <Link to="/signup" className="btn-f1-primary px-6 py-3 text-center">Create your team</Link>
+                <Link to="/login" className="btn-f1-secondary px-6 py-3 text-center">I already have an account</Link>
+              </div>
 
-        {/* Mobile CTA - visible only on mobile */}
-        <div className="md:hidden fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-gray-900 to-transparent">
-          <Link
-            to="/signup"
-            className="w-full bg-gradient-to-r from-red-600 to-red-500 text-white py-4 px-8 rounded-xl font-bold text-lg text-center block"
-          >
-            GET STARTED
-          </Link>
+              {/* Stats */}
+              <div className="mt-10 grid grid-cols-3 gap-6 max-w-md">
+                <div>
+                  <div className="text-3xl font-extrabold text-[#FF1801]">20+</div>
+                  <div className="text-xs text-gray-400">Drivers</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-extrabold text-[#FF1801]">10</div>
+                  <div className="text-xs text-gray-400">Constructors</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-extrabold text-[#FF1801]">24</div>
+                  <div className="text-xs text-gray-400">Races</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Preview Card */}
+            <div className="relative">
+              <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-[#FF1801]/40 via-white/10 to-transparent blur opacity-60" />
+              <div className="relative rounded-2xl border border-white/10 bg-white/5 p-6 shadow-2xl">
+                <div className="mb-4 flex items-center justify-between">
+                  <div className="text-sm text-gray-300">Live points engine</div>
+                  <span className="rounded-full bg-[#FF1801]/20 px-3 py-1 text-xs text-[#FF1801]">Quali</span>
+                </div>
+                <div className="space-y-3">
+                  {[
+                    { name: 'Max Verstappen', team: 'Red Bull', delta: '+18' },
+                    { name: 'Lando Norris', team: 'McLaren', delta: '+12' },
+                    { name: 'Charles Leclerc', team: 'Ferrari', delta: '+10' },
+                    { name: 'Lewis Hamilton', team: 'Mercedes', delta: '+8' },
+                  ].map((d, i) => (
+                    <div key={i} className="flex items-center justify-between rounded-xl border border-white/10 bg-black/30 px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        <div className="h-8 w-8 shrink-0 rounded-lg bg-gradient-to-br from-white/10 to-white/5 grid place-items-center text-xs text-gray-300">{i + 1}</div>
+                        <div>
+                          <div className="font-semibold">{d.name}</div>
+                          <div className="text-xs text-gray-400">{d.team}</div>
+                        </div>
+                      </div>
+                      <div className="text-sm font-semibold text-emerald-400">{d.delta}</div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 grid grid-cols-3 gap-2 text-center text-xs text-gray-300">
+                  <div className="rounded-md bg-white/5 p-2">Fastest Lap +5</div>
+                  <div className="rounded-md bg-white/5 p-2">Positions Gained +2</div>
+                  <div className="rounded-md bg-white/5 p-2">Constructor Bonus +3</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
+
+      {/* How it works */}
+      <section className="mx-auto max-w-7xl px-6 py-16">
+        <h2 className="text-3xl sm:text-4xl font-extrabold mb-8">Win with strategy</h2>
+        <div className="grid gap-6 md:grid-cols-3">
+          {[
+            { title: 'Draft your lineup', desc: 'Pick 5 drivers and 1 constructor within the budget. Balance stars with value picks.' },
+            { title: 'Set race tactics', desc: 'Choose your captain, lock your team before quali, and react to form swings.' },
+            { title: 'Climb the ranks', desc: 'Score from quali and race results. Chase podiums, fastest laps, and team bonuses.' },
+          ].map((s, i) => (
+            <div key={i} className="group rounded-2xl border border-white/10 bg-white/[0.04] p-6 transition hover:bg-white/[0.06]">
+              <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-[#FF1801] to-red-600 font-bold">{i + 1}</div>
+              <h3 className="mb-2 text-xl font-bold">{s.title}</h3>
+              <p className="text-gray-300">{s.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Leaderboard Preview */}
+      <section className="mx-auto max-w-7xl px-6 py-10">
+        <div className="flex items-end justify-between gap-4 mb-6">
+          <h2 className="text-3xl font-extrabold">Global leaderboard</h2>
+          <Link to="/leaderboard" className="text-sm text-gray-300 hover:text-white">View all →</Link>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {[1,2,3,4,5,6].map((i) => (
+            <div key={i} className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="h-9 w-9 rounded-lg bg-white/10 grid place-items-center text-sm">#{i}</div>
+                  <div>
+                    <div className="font-semibold">Team {i}</div>
+                    <div className="text-xs text-gray-400">Manager {i}</div>
+                  </div>
+                </div>
+                <div className="text-[#FF1801] font-bold">{2400 - i * 7} pts</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA Strip */}
+      <section className="mx-auto max-w-7xl px-6 py-16">
+        <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-r from-white/[0.06] to-transparent px-6 py-10">
+          <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-[#FF1801]/20 blur-2xl" />
+          <div className="relative flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h3 className="text-2xl sm:text-3xl font-extrabold">Your pit wall awaits</h3>
+              <p className="text-gray-300">Sign up now and join the grid before the next lights out.</p>
+            </div>
+            <div className="flex gap-3">
+              <Link to="/signup" className="btn-f1-primary px-6 py-3">Get started</Link>
+              <Link to="/login" className="px-6 py-3 rounded-lg border border-white/10 hover:bg-white/10">Sign in</Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-white/10 bg-black/60">
+        <div className="mx-auto max-w-7xl px-6 py-10 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <div className="h-8 w-8 rounded-md bg-gradient-to-br from-[#FF1801] to-red-600 grid place-items-center text-sm font-bold">F1</div>
+            <span className="font-f1">Fantasy League</span>
+          </div>
+          <p className="text-xs text-gray-400">© 2025 F1 Fantasy League. Built for race fans.</p>
+        </div>
+      </footer>
     </div>
   );
 }
