@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import TeamCreation from '../components/TeamCreation';
 import PastTeams from '../components/PastTeams';
+import ScoringRules from '../components/ScoringRules';
 import { raceService, fantasyTeamService } from '../services';
 
 function FantasyTeam() {
@@ -111,6 +112,16 @@ function FantasyTeam() {
             >
               Past Teams
             </button>
+            <button
+              onClick={() => setActiveTab('scoring')}
+              className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-all duration-300 ${
+                activeTab === 'scoring'
+                  ? 'bg-gradient-to-r from-[#FF1801] to-red-600 text-white shadow-lg'
+                  : 'text-gray-400 hover:text-white hover:bg-white/[0.08]'
+              }`}
+            >
+              Scoring Rules
+            </button>
           </div>
         </div>
 
@@ -124,6 +135,7 @@ function FantasyTeam() {
             />
           )}
           {activeTab === 'past' && <PastTeams />}
+          {activeTab === 'scoring' && <ScoringRules />}
         </div>
       </div>
     </Layout>
