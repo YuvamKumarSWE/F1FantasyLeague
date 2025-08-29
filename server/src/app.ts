@@ -31,12 +31,33 @@ app.use(express.json({ limit: "100kb" }));
 app.use(express.urlencoded({ extended: true, limit: "100kb" }));
 app.use(helmet());
 app.use(cookieParser());
+
+// CORS configuration using environment variables
+const allowedOrigins = process.env.ALLOWED_ORIGINS 
+  ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
+  : ['http://localhost:5173']; // fallback for development
+
 app.use(cors({
-  origin:  'https://ykf1-fantasy.vercel.app/',
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+    
+    // Check if origin is in allowed origins array or matches Vercel pattern
+    const isAllowed = allowedOrigins.includes(origin) || 
+                     /https:\/\/.*\.vercel\.app$/.test(origin);
+    
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      console.log(`CORS blocked origin: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 200 }));
 app.use(morgan('dev'));
 
@@ -59,8 +80,6 @@ app.use('/api/v1/standings', standingRouter);
 app.use('/api/v1/ft', fantasyTeamRouter);
 app.use('/api/v1/results', resultRouter);
 app.use('/api/v1/leaderboard', leaderboardRouter);
-
-// Remove the admin game router for security
 
 // Start server
 app.listen(PORT, () => {
