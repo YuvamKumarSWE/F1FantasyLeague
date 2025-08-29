@@ -44,11 +44,11 @@ function PastTeams() {
     return (
       <div className="space-y-6">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="bg-white rounded-lg shadow p-6 animate-pulse">
-            <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
+          <div key={i} className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 animate-pulse">
+            <div className="h-6 bg-white/10 rounded w-1/3 mb-4"></div>
             <div className="space-y-3">
               {[...Array(5)].map((_, j) => (
-                <div key={j} className="h-4 bg-gray-200 rounded"></div>
+                <div key={j} className="h-4 bg-white/10 rounded"></div>
               ))}
             </div>
           </div>
@@ -59,19 +59,19 @@ function PastTeams() {
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-        <h3 className="text-lg font-medium text-red-800">Error</h3>
-        <p className="text-red-600 mt-2">{error}</p>
+      <div className="rounded-2xl border border-red-500/20 bg-red-500/10 p-6">
+        <h3 className="text-lg font-semibold text-red-400">Error</h3>
+        <p className="text-red-300 mt-2">{error}</p>
       </div>
     );
   }
 
   if (pastTeams.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow p-6 text-center">
-        <div className="text-gray-400 text-6xl mb-4">🏎️</div>
-        <h3 className="text-lg font-medium text-gray-900 mb-2">No Teams Yet</h3>
-        <p className="text-gray-600">
+      <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-8 text-center">
+        <div className="text-6xl mb-4">🏎️</div>
+        <h3 className="text-xl font-semibold text-white mb-2">No Teams Yet</h3>
+        <p className="text-gray-400">
           You haven't created any fantasy teams yet. Create your first team to get started!
         </p>
       </div>
@@ -81,41 +81,41 @@ function PastTeams() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold text-gray-900">
+        <h2 className="text-2xl font-bold text-white">
           Your Fantasy Teams ({pastTeams.length})
         </h2>
-        <div className="text-sm text-gray-600">
+        <div className="text-sm text-gray-400">
           Total Points: {pastTeams.reduce((total, team) => total + team.points, 0)}
         </div>
       </div>
 
       <div className="grid gap-6">
         {pastTeams.map((team) => (
-          <div key={team._id} className="bg-white rounded-lg shadow">
+          <div key={team._id} className="rounded-2xl border border-white/10 bg-white/[0.04]">
             {/* Team Header */}
-            <div className="px-6 py-4 border-b border-gray-200">
+            <div className="px-6 py-4 border-b border-white/10">
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">
+                  <h3 className="text-xl font-bold text-white">
                     {team.race?.raceName || 'Unknown Race'}
                   </h3>
-                  <div className="flex items-center space-x-4 mt-1 text-sm text-gray-600">
+                  <div className="flex items-center space-x-4 mt-2 text-sm text-gray-400">
                     <span>Round {team.race?.round}</span>
                     <span>{team.race?.year}</span>
                     <span>Created: {formatDate(team.createdAt)}</span>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-blue-600">
+                  <div className="text-3xl font-black text-[#FF1801]">
                     {team.points} pts
                   </div>
-                  <div className="flex items-center space-x-2 mt-1">
+                  <div className="flex items-center space-x-2 mt-2">
                     {team.locked && (
-                      <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded">
+                      <span className="px-3 py-1 text-xs font-medium bg-red-500/20 text-red-400 rounded-full">
                         Locked
                       </span>
                     )}
-                    <span className="text-sm text-gray-600">
+                    <span className="text-sm text-gray-400">
                       ${calculateTotalCost(team.drivers)}M spent
                     </span>
                   </div>
@@ -127,31 +127,31 @@ function PastTeams() {
             <div className="px-6 py-4">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {team.drivers?.map((driver) => (
-                  <div 
-                    key={driver._id} 
-                    className={`p-3 rounded-lg border transition-all ${
-                      team.captain?._id === driver._id 
-                        ? 'border-yellow-400 bg-yellow-50' 
-                        : 'border-gray-200 bg-gray-50'
+                  <div
+                    key={driver._id}
+                    className={`p-4 rounded-xl border transition-all ${
+                      team.captain?._id === driver._id
+                        ? 'border-yellow-500/20 bg-yellow-500/10'
+                        : 'border-white/10 bg-white/[0.04]'
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-3">
                         {team.captain?._id === driver._id && (
-                          <span className="text-yellow-500 text-sm">👑</span>
+                          <span className="text-yellow-400 text-lg">👑</span>
                         )}
                         <div>
-                          <p className="font-medium text-gray-900 text-sm">
+                          <p className="font-semibold text-white text-sm">
                             {driver.name} {driver.surname}
                           </p>
-                          <p className="text-xs text-gray-500">{driver.team}</p>
+                          <p className="text-xs text-gray-400">{driver.team}</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm font-medium text-gray-900">
+                        <p className="text-sm font-bold text-[#FF1801]">
                           ${driver.cost}M
                         </p>
-                        <p className="text-xs text-gray-500">#{driver.number}</p>
+                        <p className="text-xs text-gray-400">#{driver.number}</p>
                       </div>
                     </div>
                   </div>
@@ -159,21 +159,21 @@ function PastTeams() {
               </div>
 
               {/* Team Summary */}
-              <div className="mt-4 pt-4 border-t border-gray-200">
+              <div className="mt-6 pt-4 border-t border-white/10">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Total Cost:</span>
-                    <span className="font-medium">${calculateTotalCost(team.drivers)}M</span>
+                  <div className="flex justify-between items-center p-3 rounded-xl border border-white/10 bg-white/[0.04]">
+                    <span className="text-gray-400">Total Cost:</span>
+                    <span className="font-semibold text-white">${calculateTotalCost(team.drivers)}M</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Captain:</span>
-                    <span className="font-medium">
+                  <div className="flex justify-between items-center p-3 rounded-xl border border-white/10 bg-white/[0.04]">
+                    <span className="text-gray-400">Captain:</span>
+                    <span className="font-semibold text-white">
                       {team.captain ? `${team.captain.name} ${team.captain.surname}` : 'None'}
                     </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Race Circuit:</span>
-                    <span className="font-medium">
+                  <div className="flex justify-between items-center p-3 rounded-xl border border-white/10 bg-white/[0.04]">
+                    <span className="text-gray-400">Race Circuit:</span>
+                    <span className="font-semibold text-white">
                       {team.race?.circuit?.circuitName || 'Unknown'}
                     </span>
                   </div>
@@ -185,35 +185,35 @@ function PastTeams() {
       </div>
 
       {/* Summary Stats */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Season Summary</h3>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-blue-600">
+      <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6">
+        <h3 className="text-xl font-bold text-white mb-6">Season Summary</h3>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="text-center p-4 rounded-xl border border-white/10 bg-white/[0.04]">
+            <div className="text-3xl font-black text-[#FF1801] mb-1">
               {pastTeams.length}
             </div>
-            <div className="text-sm text-gray-600">Teams Created</div>
+            <div className="text-sm text-gray-400">Teams Created</div>
           </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-green-600">
+          <div className="text-center p-4 rounded-xl border border-white/10 bg-white/[0.04]">
+            <div className="text-3xl font-black text-green-400 mb-1">
               {pastTeams.reduce((total, team) => total + team.points, 0)}
             </div>
-            <div className="text-sm text-gray-600">Total Points</div>
+            <div className="text-sm text-gray-400">Total Points</div>
           </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-purple-600">
-              {pastTeams.length > 0 
+          <div className="text-center p-4 rounded-xl border border-white/10 bg-white/[0.04]">
+            <div className="text-3xl font-black text-blue-400 mb-1">
+              {pastTeams.length > 0
                 ? Math.round(pastTeams.reduce((total, team) => total + team.points, 0) / pastTeams.length)
                 : 0
               }
             </div>
-            <div className="text-sm text-gray-600">Avg Points/Team</div>
+            <div className="text-sm text-gray-400">Avg Points/Team</div>
           </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-orange-600">
+          <div className="text-center p-4 rounded-xl border border-white/10 bg-white/[0.04]">
+            <div className="text-3xl font-black text-yellow-400 mb-1">
               {Math.max(...pastTeams.map(team => team.points), 0)}
             </div>
-            <div className="text-sm text-gray-600">Best Performance</div>
+            <div className="text-sm text-gray-400">Best Performance</div>
           </div>
         </div>
       </div>

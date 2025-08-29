@@ -154,11 +154,11 @@ function TeamCreation({ nextRace, currentTeam, onTeamCreated }) {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="bg-white rounded-lg shadow p-6 animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
+        <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 animate-pulse">
+          <div className="h-6 bg-white/10 rounded w-1/3 mb-4"></div>
           <div className="space-y-3">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-4 bg-gray-200 rounded"></div>
+              <div key={i} className="h-4 bg-white/10 rounded"></div>
             ))}
           </div>
         </div>
@@ -170,44 +170,44 @@ function TeamCreation({ nextRace, currentTeam, onTeamCreated }) {
     return (
       <div className="space-y-6">
         {/* Current Team Display */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6">
+          <h2 className="text-xl font-bold text-white mb-6">
             Your Team for {nextRace?.raceName}
           </h2>
-          
+
           <div className="space-y-4">
             {currentTeam.drivers?.map((driver) => (
-              <div 
-                key={driver._id} 
-                className={`flex justify-between items-center p-4 rounded-lg border ${
-                  currentTeam.captain?._id === driver._id 
-                    ? 'border-yellow-400 bg-yellow-50' 
-                    : 'border-gray-200'
+              <div
+                key={driver._id}
+                className={`flex justify-between items-center p-4 rounded-xl border transition-all ${
+                  currentTeam.captain?._id === driver._id
+                    ? 'border-yellow-500/20 bg-yellow-500/10'
+                    : 'border-white/10 bg-white/[0.04]'
                 }`}
               >
                 <div className="flex items-center space-x-3">
                   {currentTeam.captain?._id === driver._id && (
-                    <span className="text-yellow-500 text-lg">👑</span>
+                    <span className="text-yellow-400 text-lg">👑</span>
                   )}
                   <div>
-                    <p className="font-medium text-gray-900">
+                    <p className="font-semibold text-white">
                       {driver.name} {driver.surname}
                     </p>
-                    <p className="text-sm text-gray-500">{driver.team}</p>
+                    <p className="text-sm text-gray-400">{driver.team}</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-medium text-gray-900">${driver.cost}M</p>
-                  <p className="text-sm text-gray-500">#{driver.number}</p>
+                  <p className="font-bold text-[#FF1801]">${driver.cost}M</p>
+                  <p className="text-sm text-gray-400">#{driver.number}</p>
                 </div>
               </div>
             ))}
           </div>
-          
-          <div className="mt-6 pt-4 border-t border-gray-200">
-            <div className="flex justify-between text-lg font-semibold">
-              <span>Total Cost:</span>
-              <span>${currentTeam.drivers?.reduce((total, driver) => total + (driver.cost || 0), 0)}M</span>
+
+          <div className="mt-6 pt-4 border-t border-white/10">
+            <div className="flex justify-between text-lg font-bold">
+              <span className="text-gray-400">Total Cost:</span>
+              <span className="text-white">${currentTeam.drivers?.reduce((total, driver) => total + (driver.cost || 0), 0)}M</span>
             </div>
           </div>
         </div>
@@ -218,55 +218,57 @@ function TeamCreation({ nextRace, currentTeam, onTeamCreated }) {
   return (
     <div className="space-y-6">
       {/* Deadline Section */}
-      <div className={`rounded-lg shadow p-6 ${
-        isDeadlinePassed() ? 'bg-red-50 border border-red-200' : 'bg-blue-50 border border-blue-200'
+      <div className={`rounded-2xl border p-6 ${
+        isDeadlinePassed()
+          ? 'border-red-500/20 bg-red-500/10'
+          : 'border-[#FF1801]/20 bg-[#FF1801]/10'
       }`}>
-        <h2 className="text-lg font-semibold mb-2">
+        <h2 className="text-xl font-bold mb-3 text-white">
           Team Selection Deadline
         </h2>
-        <p className="text-sm text-gray-600 mb-2">
+        <p className="text-sm text-gray-400 mb-2">
           {nextRace?.raceName} - Practice 1 Session
         </p>
-        <p className="font-medium">{formatDeadline()}</p>
-        <p className={`text-sm mt-1 ${
-          isDeadlinePassed() ? 'text-red-600' : 'text-blue-600'
+        <p className="font-semibold text-white">{formatDeadline()}</p>
+        <p className={`text-sm mt-2 font-medium ${
+          isDeadlinePassed() ? 'text-red-400' : 'text-[#FF1801]'
         }`}>
-          {isDeadlinePassed() ? 'Deadline has passed' : `Time remaining: ${getTimeUntilDeadline()}`}
+          {isDeadlinePassed() ? '⏰ Deadline has passed' : `⏳ Time remaining: ${getTimeUntilDeadline()}`}
         </p>
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-red-600">{error}</p>
+        <div className="rounded-2xl border border-red-500/20 bg-red-500/10 p-6">
+          <p className="text-red-400 font-medium">{error}</p>
         </div>
       )}
 
       {!isDeadlinePassed() && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Available Drivers */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6">
+            <h3 className="text-xl font-bold text-white mb-6">
               Available Drivers
             </h3>
-            <div className="space-y-2 max-h-96 overflow-y-auto">
+            <div className="space-y-3 max-h-96 overflow-y-auto">
               {allDrivers
                 .filter(driver => !selectedDrivers.find(d => d._id === driver._id))
                 .map((driver) => (
                   <div
                     key={driver._id}
-                    className="p-3 rounded-lg border cursor-pointer transition-all border-gray-200 bg-white hover:border-blue-300 hover:bg-blue-50"
+                    className="p-4 rounded-xl border border-white/10 bg-white/[0.04] cursor-pointer transition-all hover:border-[#FF1801]/30 hover:bg-[#FF1801]/5"
                     onClick={() => handleDriverSelect(driver)}
                   >
                     <div className="flex justify-between items-center">
                       <div>
-                        <p className="font-medium text-gray-900">
+                        <p className="font-semibold text-white">
                           {driver.name} {driver.surname}
                         </p>
-                        <p className="text-sm text-gray-500">{driver.team}</p>
+                        <p className="text-sm text-gray-400">{driver.team}</p>
                       </div>
                       <div className="text-right">
-                        <p className="font-medium text-gray-900">${driver.cost}M</p>
-                        <p className="text-sm text-gray-500">#{driver.number}</p>
+                        <p className="font-bold text-[#FF1801]">${driver.cost}M</p>
+                        <p className="text-sm text-gray-400">#{driver.number}</p>
                       </div>
                     </div>
                   </div>
@@ -277,47 +279,47 @@ function TeamCreation({ nextRace, currentTeam, onTeamCreated }) {
           {/* Selected Team */}
           <div className="space-y-6">
             {/* Selected Drivers */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6">
+              <h3 className="text-xl font-bold text-white mb-6">
                 Your Team ({selectedDrivers.length}/{REQUIRED_DRIVERS})
               </h3>
-              
-              <div className="space-y-2 min-h-[200px]">
+
+              <div className="space-y-3 min-h-[200px]">
                 {selectedDrivers.map((driver) => (
                   <div
                     key={driver._id}
-                    className={`p-3 rounded-lg border transition-all ${
-                      captain?._id === driver._id 
-                        ? 'border-yellow-400 bg-yellow-50' 
-                        : 'border-gray-200 bg-white'
+                    className={`p-4 rounded-xl border transition-all ${
+                      captain?._id === driver._id
+                        ? 'border-yellow-500/20 bg-yellow-500/10'
+                        : 'border-white/10 bg-white/[0.04]'
                     }`}
                   >
                     <div className="flex justify-between items-center">
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-3">
                         {captain?._id === driver._id && (
-                          <span className="text-yellow-500">👑</span>
+                          <span className="text-yellow-400 text-lg">👑</span>
                         )}
                         <div>
-                          <p className="font-medium text-gray-900">
+                          <p className="font-semibold text-white">
                             {driver.name} {driver.surname}
                           </p>
-                          <p className="text-sm text-gray-500">{driver.team}</p>
+                          <p className="text-sm text-gray-400">{driver.team}</p>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-3">
                         <div className="text-right">
-                          <p className="font-medium text-gray-900">${driver.cost}M</p>
-                          <p className="text-sm text-gray-500">#{driver.number}</p>
+                          <p className="font-bold text-[#FF1801]">${driver.cost}M</p>
+                          <p className="text-sm text-gray-400">#{driver.number}</p>
                         </div>
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             handleCaptainSelect(driver);
                           }}
-                          className={`px-2 py-1 text-xs rounded ${
+                          className={`px-3 py-1 text-xs rounded-full font-medium transition-all ${
                             captain?._id === driver._id
-                              ? 'bg-yellow-200 text-yellow-800'
-                              : 'bg-gray-200 text-gray-600 hover:bg-yellow-200'
+                              ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
+                              : 'bg-white/10 text-gray-400 hover:bg-yellow-500/20 hover:text-yellow-400 border border-white/10'
                           }`}
                           disabled={isDeadlinePassed()}
                         >
@@ -328,7 +330,7 @@ function TeamCreation({ nextRace, currentTeam, onTeamCreated }) {
                             e.stopPropagation();
                             handleDriverRemove(driver._id);
                           }}
-                          className="text-red-500 hover:text-red-700"
+                          className="text-red-400 hover:text-red-300 p-1 rounded-full hover:bg-red-500/10 transition-all"
                           disabled={isDeadlinePassed()}
                         >
                           ✕
@@ -341,36 +343,40 @@ function TeamCreation({ nextRace, currentTeam, onTeamCreated }) {
             </div>
 
             {/* Budget Summary */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Budget</h3>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Total Budget:</span>
-                  <span className="font-medium">${TOTAL_BUDGET}M</span>
+            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6">
+              <h3 className="text-xl font-bold text-white mb-6">Budget Summary</h3>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center p-3 rounded-xl border border-white/10 bg-white/[0.04]">
+                  <span className="text-gray-400">Total Budget:</span>
+                  <span className="font-bold text-white">${TOTAL_BUDGET}M</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Spent:</span>
-                  <span className="font-medium">${totalCost}M</span>
+                <div className="flex justify-between items-center p-3 rounded-xl border border-white/10 bg-white/[0.04]">
+                  <span className="text-gray-400">Spent:</span>
+                  <span className="font-bold text-[#FF1801]">${totalCost}M</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Remaining:</span>
-                  <span className={`font-medium ${
-                    totalCost > TOTAL_BUDGET ? 'text-red-600' : 'text-green-600'
+                <div className="flex justify-between items-center p-3 rounded-xl border border-white/10 bg-white/[0.04]">
+                  <span className="text-gray-400">Remaining:</span>
+                  <span className={`font-bold ${
+                    totalCost > TOTAL_BUDGET ? 'text-red-400' : 'text-green-400'
                   }`}>
                     ${TOTAL_BUDGET - totalCost}M
                   </span>
                 </div>
               </div>
-              
+
               {/* Progress Bar */}
-              <div className="mt-4">
-                <div className="w-full bg-gray-200 rounded-full h-3">
-                  <div 
-                    className={`h-3 rounded-full transition-all duration-300 ${
-                      totalCost > TOTAL_BUDGET ? 'bg-red-500' : 'bg-blue-500'
+              <div className="mt-6">
+                <div className="w-full bg-white/10 rounded-full h-3">
+                  <div
+                    className={`h-3 rounded-full transition-all duration-500 ${
+                      totalCost > TOTAL_BUDGET ? 'bg-red-500' : 'bg-gradient-to-r from-[#FF1801] to-red-600'
                     }`}
                     style={{ width: `${Math.min((totalCost / TOTAL_BUDGET) * 100, 100)}%` }}
                   ></div>
+                </div>
+                <div className="flex justify-between text-xs text-gray-400 mt-2">
+                  <span>0</span>
+                  <span>${TOTAL_BUDGET}M</span>
                 </div>
               </div>
             </div>
@@ -379,21 +385,21 @@ function TeamCreation({ nextRace, currentTeam, onTeamCreated }) {
             <button
               onClick={handleSubmit}
               disabled={
-                selectedDrivers.length !== REQUIRED_DRIVERS || 
-                totalCost > TOTAL_BUDGET || 
-                isDeadlinePassed() || 
+                selectedDrivers.length !== REQUIRED_DRIVERS ||
+                totalCost > TOTAL_BUDGET ||
+                isDeadlinePassed() ||
                 submitting
               }
-              className={`w-full py-3 px-4 rounded-md font-medium transition-colors ${
-                selectedDrivers.length === REQUIRED_DRIVERS && 
-                totalCost <= TOTAL_BUDGET && 
-                !isDeadlinePassed() && 
+              className={`w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 ${
+                selectedDrivers.length === REQUIRED_DRIVERS &&
+                totalCost <= TOTAL_BUDGET &&
+                !isDeadlinePassed() &&
                 !submitting
-                  ? 'bg-blue-600 text-white hover:bg-blue-700'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  ? 'bg-gradient-to-r from-[#FF1801] to-red-600 text-white hover:from-red-600 hover:to-[#FF1801] hover:shadow-lg hover:shadow-[#FF1801]/25 transform hover:scale-105'
+                  : 'bg-white/10 text-gray-500 cursor-not-allowed'
               }`}
             >
-              {submitting ? 'Creating Team...' : 'Create Team'}
+              {submitting ? '🏁 Creating Team...' : '🏎️ Create Team'}
             </button>
           </div>
         </div>

@@ -48,15 +48,15 @@ function CurrentTeam() {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow p-6 h-full">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">
+      <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 h-full">
+        <h2 className="text-xl font-bold text-white mb-6">
           Current F1 Team for Next Race
         </h2>
-        <div className="animate-pulse space-y-3">
-          <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-          <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-          <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+        <div className="animate-pulse space-y-4">
+          <div className="h-4 bg-white/10 rounded w-3/4"></div>
+          <div className="h-4 bg-white/10 rounded w-1/2"></div>
+          <div className="h-4 bg-white/10 rounded w-2/3"></div>
+          <div className="h-4 bg-white/10 rounded w-1/3"></div>
         </div>
       </div>
     );
@@ -64,11 +64,11 @@ function CurrentTeam() {
 
   if (error) {
     return (
-      <div className="bg-white rounded-lg shadow p-6 h-full">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">
+      <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 h-full">
+        <h2 className="text-xl font-bold text-white mb-6">
           Current F1 Team for Next Race
         </h2>
-        <div className="text-red-600 text-sm">
+        <div className="text-red-400 text-sm">
           <p>{error}</p>
         </div>
       </div>
@@ -77,23 +77,19 @@ function CurrentTeam() {
 
   if (!currentTeam) {
     return (
-      <div className="bg-white rounded-lg shadow p-6 h-full">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">
+      <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 h-full">
+        <h2 className="text-xl font-bold text-white mb-6">
           Current F1 Team for Next Race
         </h2>
         <div className="text-center py-8">
-          <div className="text-gray-500 mb-4">
-            <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-          </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No Team Created</h3>
-          <p className="text-gray-600 mb-4">
+          <div className="text-4xl mb-4">🏎️</div>
+          <h3 className="text-lg font-semibold text-white mb-2">No Team Created</h3>
+          <p className="text-gray-400 mb-6">
             You haven't created a team for {nextRace?.raceName} yet.
           </p>
-          <a 
-            href="/fantasy-team" 
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          <a
+            href="/fantasy-team"
+            className="inline-flex items-center px-6 py-3 rounded-xl bg-gradient-to-r from-[#FF1801] to-red-600 font-semibold text-white hover:from-red-600 hover:to-[#FF1801] transition-all duration-300 hover:shadow-lg hover:shadow-[#FF1801]/25"
           >
             Create Team
           </a>
@@ -106,17 +102,17 @@ function CurrentTeam() {
   const budgetRemaining = 100 - totalCost;
 
   return (
-    <div className="bg-white rounded-lg shadow p-6 h-full">
-      <h2 className="text-xl font-semibold text-gray-900 mb-4">
+    <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 h-full">
+      <h2 className="text-xl font-bold text-white mb-6">
         Current F1 Team for Next Race
       </h2>
-      
+
       {nextRace && (
-        <div className="mb-4 p-3 bg-blue-50 rounded-lg">
-          <p className="text-sm text-blue-800">
-            <strong>Next Race:</strong> {nextRace.raceName}
+        <div className="mb-6 rounded-xl border border-[#FF1801]/20 bg-[#FF1801]/5 p-4">
+          <p className="text-sm text-[#FF1801] font-medium">
+            🏁 Next Race: {nextRace.raceName}
           </p>
-          <p className="text-sm text-blue-600">
+          <p className="text-sm text-red-400">
             {new Date(nextRace.schedule?.race).toLocaleDateString('en-US', {
               month: 'long',
               day: 'numeric',
@@ -126,46 +122,56 @@ function CurrentTeam() {
         </div>
       )}
 
-      <div className="space-y-3">
+      <div className="space-y-4">
         <div>
-          <h3 className="text-sm font-medium text-gray-700 mb-2">Drivers</h3>
-          <div className="space-y-2">
+          <h3 className="text-sm font-semibold text-white mb-3">Drivers</h3>
+          <div className="space-y-3">
             {currentTeam.drivers?.map((driver) => (
-              <div key={driver._id} className="flex items-center justify-between text-sm">
-                <div className="flex items-center space-x-2">
-                  <span className="text-gray-600">#{driver.number}</span>
-                  <span className="font-medium">
-                    {driver.name} {driver.surname}
-                  </span>
-                  {currentTeam.captain && currentTeam.captain._id === driver._id && (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
-                      👑 Captain
-                    </span>
-                  )}
+              <div key={driver._id} className="rounded-xl border border-white/10 bg-white/[0.04] p-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <span className="text-[#FF1801] font-bold text-sm">#{driver.number}</span>
+                    <div>
+                      <span className="font-semibold text-white">
+                        {driver.name} {driver.surname}
+                      </span>
+                      {currentTeam.captain && currentTeam.captain._id === driver._id && (
+                        <div className="flex items-center mt-1">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-500/20 text-yellow-400">
+                            👑 Captain
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <span className="text-gray-400 font-medium">{formatCurrency(driver.cost)}</span>
                 </div>
-                <span className="text-gray-500">{formatCurrency(driver.cost)}</span>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="pt-3 border-t border-gray-200">
-          <div className="flex justify-between text-sm">
-            <span className="font-medium text-gray-700">Total Cost:</span>
-            <span className="font-semibold">{formatCurrency(totalCost)}</span>
-          </div>
-          <div className="flex justify-between text-sm text-gray-600 mt-1">
-            <span>Budget Remaining:</span>
-            <span className={budgetRemaining >= 0 ? 'text-green-600' : 'text-red-600'}>
-              {formatCurrency(budgetRemaining)}
-            </span>
+        <div className="pt-4 border-t border-white/10">
+          <div className="rounded-xl border border-white/10 bg-white/[0.04] p-4 space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="font-medium text-gray-400">Total Cost:</span>
+              <span className="font-bold text-white">{formatCurrency(totalCost)}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-400">Budget Remaining:</span>
+              <span className={`font-semibold ${
+                budgetRemaining >= 0 ? 'text-green-400' : 'text-red-400'
+              }`}>
+                {formatCurrency(budgetRemaining)}
+              </span>
+            </div>
           </div>
         </div>
 
-        <div className="pt-3">
-          <a 
-            href="/fantasy-team" 
-            className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-center block text-sm font-medium"
+        <div className="pt-4">
+          <a
+            href="/fantasy-team"
+            className="w-full bg-gradient-to-r from-[#FF1801] to-red-600 text-white px-4 py-3 rounded-xl hover:from-red-600 hover:to-[#FF1801] transition-all duration-300 font-semibold text-center block hover:shadow-lg hover:shadow-[#FF1801]/25"
           >
             Manage Team
           </a>

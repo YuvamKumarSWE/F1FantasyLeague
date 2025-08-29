@@ -132,7 +132,7 @@ const DriversPage = () => {
                   {driver.name} {driver.surname}
                 </h3>
                 <p className="text-gray-400 text-sm">
-                  {driver.teamId}
+                  {driver.teamId.toUpperCase()}
                 </p>
               </div>
 

@@ -35,10 +35,11 @@ function UserRankCard() {
 
   if (!isAuthenticated) {
     return (
-      <div className="bg-gray-50 rounded-lg border border-gray-200 p-6">
-        <div className="text-center text-gray-600">
-          <p className="text-lg font-medium">Login to see your rank</p>
-          <p className="text-sm mt-1">Create an account to join the fantasy league</p>
+      <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6">
+        <div className="text-center">
+          <div className="text-2xl mb-3">🏎️</div>
+          <p className="text-lg font-semibold text-white mb-1">Login Required</p>
+          <p className="text-sm text-gray-400">Create an account to join the fantasy league</p>
         </div>
       </div>
     );
@@ -46,10 +47,10 @@ function UserRankCard() {
 
   if (loading) {
     return (
-      <div className="bg-blue-50 rounded-lg border border-blue-200 p-6">
+      <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="text-blue-700 mt-2">Loading your stats...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF1801] mx-auto mb-3"></div>
+          <p className="text-[#FF1801] font-medium">Loading your stats...</p>
         </div>
       </div>
     );
@@ -57,10 +58,11 @@ function UserRankCard() {
 
   if (error) {
     return (
-      <div className="bg-red-50 rounded-lg border border-red-200 p-6">
-        <div className="text-center text-red-700">
-          <p className="font-medium">Error loading rank</p>
-          <p className="text-sm mt-1">{error}</p>
+      <div className="rounded-2xl border border-red-500/20 bg-red-500/10 p-6">
+        <div className="text-center">
+          <div className="text-red-400 mb-2">⚠️</div>
+          <p className="font-semibold text-red-400">Error loading rank</p>
+          <p className="text-sm text-red-300 mt-1">{error}</p>
         </div>
       </div>
     );
@@ -68,20 +70,21 @@ function UserRankCard() {
 
   if (!userRank) {
     return (
-      <div className="bg-yellow-50 rounded-lg border border-yellow-200 p-6">
-        <div className="text-center text-yellow-700">
-          <p className="font-medium">No rank data available</p>
-          <p className="text-sm mt-1">Join the fantasy league to get ranked</p>
+      <div className="rounded-2xl border border-yellow-500/20 bg-yellow-500/10 p-6">
+        <div className="text-center">
+          <div className="text-yellow-400 mb-2">🎯</div>
+          <p className="font-semibold text-yellow-400">No rank data available</p>
+          <p className="text-sm text-yellow-300 mt-1">Join the fantasy league to get ranked</p>
         </div>
       </div>
     );
   }
 
   const getRankColor = (rank) => {
-    if (rank === 1) return 'text-yellow-600';
-    if (rank === 2) return 'text-gray-600';
-    if (rank === 3) return 'text-yellow-700';
-    return 'text-blue-600';
+    if (rank === 1) return 'text-yellow-400';
+    if (rank === 2) return 'text-gray-400';
+    if (rank === 3) return 'text-orange-400';
+    return 'text-[#FF1801]';
   };
 
   const getRankIcon = (rank) => {
@@ -92,34 +95,59 @@ function UserRankCard() {
   };
 
   return (
-    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200 p-6 shadow-sm">
+    <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6">
       <div className="text-center">
-        <div className="flex items-center justify-center mb-3">
-          <span className="text-2xl mr-2">{getRankIcon(userRank.rank)}</span>
-          <h3 className="text-xl font-bold text-gray-900">Your Performance</h3>
+        <div className="flex items-center justify-center mb-6">
+          <span className="text-3xl mr-3">{getRankIcon(userRank.rank)}</span>
+          <h3 className="text-xl font-bold text-white">Your Performance</h3>
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-          <div className="bg-white rounded-lg p-4 shadow-sm">
-            <p className="text-sm text-gray-600 font-medium">Current Rank</p>
-            <p className={`text-2xl font-bold ${getRankColor(userRank.rank)}`}>
+
+        {/* Rank Badge */}
+        <div className="mb-6">
+          <div className={`inline-flex items-center px-4 py-2 rounded-full border ${
+            userRank.rank <= 3
+              ? 'border-yellow-500/20 bg-yellow-500/10'
+              : 'border-[#FF1801]/20 bg-[#FF1801]/10'
+          }`}>
+            <span className={`text-2xl font-black ${getRankColor(userRank.rank)} mr-2`}>
               #{userRank.rank}
-            </p>
-            <p className="text-xs text-gray-500">of {userRank.totalUsers} players</p>
-          </div>
-          
-          <div className="bg-white rounded-lg p-4 shadow-sm">
-            <p className="text-sm text-gray-600 font-medium">Fantasy Points</p>
-            <p className="text-2xl font-bold text-green-600">{userRank.fantasyPoints}</p>
-            <p className="text-xs text-gray-500">Total earned</p>
-          </div>
-          
-          <div className="bg-white rounded-lg p-4 shadow-sm">
-            <p className="text-sm text-gray-600 font-medium">Username</p>
-            <p className="text-lg font-semibold text-gray-900">{userRank.username}</p>
-            <p className="text-xs text-gray-500">Your identity</p>
+            </span>
+            <span className="text-sm text-gray-400">
+              of {userRank.totalUsers} drivers
+            </span>
           </div>
         </div>
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 gap-4">
+          <div className="rounded-xl border border-white/10 bg-white/[0.04] p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-400 font-medium">Fantasy Points</p>
+                <p className="text-2xl font-black text-green-400">{userRank.fantasyPoints}</p>
+              </div>
+              <div className="text-right">
+                <div className="text-green-400">📈</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-white/10 bg-white/[0.04] p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-gray-400 font-medium">Driver</p>
+                <p className="text-lg font-bold text-white truncate">{userRank.username}</p>
+              </div>
+              <div className="ml-3 flex-shrink-0">
+                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-[#FF1801] to-red-600 grid place-items-center text-sm font-bold text-white">
+                  {userRank.username?.charAt(0)?.toUpperCase() || 'D'}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        
       </div>
     </div>
   );
