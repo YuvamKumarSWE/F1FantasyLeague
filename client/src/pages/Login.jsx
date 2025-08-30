@@ -25,15 +25,24 @@ function Login() {
     setLoading(true);
     setError('');
 
-    const result = await login(formData);
-    
-    if (result.success) {
-      navigate('/dashboard');
-    } else {
-      setError(result.error);
+    try {
+      const result = await login(formData);
+      
+      if (result.success) {
+        navigate('/dashboard');
+      } else {
+        setError(result.error);
+      }
+    } catch (error) {
+      // Handle server spin-up scenario
+      if (error.response?.status === 404) {
+        setError('Server is starting up after inactivity. Please wait 30-60 seconds and try again.');
+      } else {
+        setError(error.response?.data?.message || 'Login failed. Please try again.');
+      }
+    } finally {
+      setLoading(false);
     }
-    
-    setLoading(false);
   };
 
   return (

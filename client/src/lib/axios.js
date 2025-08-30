@@ -30,6 +30,16 @@ api.interceptors.response.use(
       localStorage.removeItem('accessToken');
       window.location.href = '/login';
     }
+    
+    // Handle server spin-down (common with free tier hosting)
+    if (error.response?.status === 404 && error.config?.url?.includes('/users/')) {
+      // Show server spin-up alert for auth endpoints
+      const event = new CustomEvent('serverSpinUp', { 
+        detail: { message: 'Server is starting up after inactivity. Please wait a moment...' }
+      });
+      window.dispatchEvent(event);
+    }
+    
     return Promise.reject(error);
   }
 );
