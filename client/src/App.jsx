@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import ServerAlert from './components/ServerAlert';
+import ErrorBoundary from './components/ErrorBoundary';
 import Landing from './pages/Landing';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
@@ -16,59 +17,61 @@ import RaceResults from './pages/RaceResults';
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <ServerAlert />
-        <Routes>
-          <Route path="/" element={<Navigate to="/landing" replace />} />
-          <Route path="/landing" element={<Landing />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
-          
-          {/* Protected Routes */}
-          <Route path="/dashboard" element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/drivers" element={
-            <ProtectedRoute>
-              <Drivers />
-            </ProtectedRoute>
-          } />
-          <Route path="/constructors" element={
-            <ProtectedRoute>
-              <Constructors />
-            </ProtectedRoute>
-          } />
-          <Route path="/fantasy-team" element={
-            <ProtectedRoute>
-              <FantasyTeam />
-            </ProtectedRoute>
-          } />
-          <Route path="/races" element={
-            <ProtectedRoute>
-              <Races />
-            </ProtectedRoute>
-          } />
-          <Route path="/standings" element={
-            <ProtectedRoute>
-              <Standings />
-            </ProtectedRoute>
-          } />
-          <Route path="/leaderboard" element={
-            <ProtectedRoute>
-              <Leaderboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/races/:raceId/results" element={
-            <ProtectedRoute>
-              <RaceResults />
-            </ProtectedRoute>
-          } />
-        </Routes>
-      </Router>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <Router>
+          <ServerAlert />
+          <Routes>
+            <Route path="/" element={<Navigate to="/landing" replace />} />
+            <Route path="/landing" element={<Landing />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/login" element={<Login />} />
+            
+            {/* Protected Routes */}
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/drivers" element={
+              <ProtectedRoute>
+                <Drivers />
+              </ProtectedRoute>
+            } />
+            <Route path="/constructors" element={
+              <ProtectedRoute>
+                <Constructors />
+              </ProtectedRoute>
+            } />
+            <Route path="/fantasy-team" element={
+              <ProtectedRoute>
+                <FantasyTeam />
+              </ProtectedRoute>
+            } />
+            <Route path="/races" element={
+              <ProtectedRoute>
+                <Races />
+              </ProtectedRoute>
+            } />
+            <Route path="/standings" element={
+              <ProtectedRoute>
+                <Standings />
+              </ProtectedRoute>
+            } />
+            <Route path="/leaderboard" element={
+              <ProtectedRoute>
+                <Leaderboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/races/:raceId/results" element={
+              <ProtectedRoute>
+                <RaceResults />
+              </ProtectedRoute>
+            } />
+          </Routes>
+        </Router>
+      </AuthProvider>
+    </ErrorBoundary>
   )
 }
 
