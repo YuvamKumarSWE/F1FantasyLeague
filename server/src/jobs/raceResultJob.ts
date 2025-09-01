@@ -63,7 +63,11 @@ export function startRaceResultScheduler() {
     console.log('🚀 [SCHEDULER] Race result scheduler started - will run every Monday at 00:00 AM');
     
     // For development: Also run on startup
-    if (process.env.NODE_ENV === 'development') {
+    // previously the app ran the initial check unconditionally on startup
+    // changed code: make startup check opt-in via env var RUN_STARTUP_CHECK
+    const RUN_STARTUP_CHECK = process.env.RUN_STARTUP_CHECK === 'true';
+
+    if (RUN_STARTUP_CHECK) {
         console.log('🔧 [DEV] Running initial check on startup...');
         setTimeout(async () => {
             try {
@@ -95,5 +99,7 @@ export function startRaceResultScheduler() {
                 console.error('💥 [DEV] Error in startup race check:', error.message);
             }
         }, 5000);
+    } else {
+        console.log('🔧 [DEV] Startup initial check skipped (set RUN_STARTUP_CHECK=true to enable)');
     }
 }
