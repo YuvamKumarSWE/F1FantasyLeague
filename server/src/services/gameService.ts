@@ -12,14 +12,18 @@ export async function processRaceResults(raceId: string) {
             throw new Error(`Race not found: ${raceId}`);
         }
 
+        console.log(`Race found: ${raceId}`);
+        console.log(`Race round: ${race.round}`);
+
         // Get race results from external API using year and round
-        const apiUrl = `https://f1api.dev/api/${race.year}/${race.round}/race`;
+        const apiUrl = `https://f1api.dev/api/2025/${race.round}/race`;
         let raceResults;
         
         try {
             const response = await axios.get(apiUrl);
-            raceResults = response.data?.results;
-            
+            // try both shapes: top-level `results` or nested `races.results`
+            raceResults = response.data?.results ?? response.data?.races?.results;
+
             if (!raceResults || !Array.isArray(raceResults)) {
                 throw new Error('No results found for this race from external API');
             }
