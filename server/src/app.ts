@@ -15,6 +15,7 @@ import standingRouter from './routes/standingRouter';
 import fantasyTeamRouter from './routes/fantasyTeamRouter';
 import resultRouter from './routes/resultRoutes';
 import leaderboardRouter from './routes/leaderboardRouter';
+import AIRouter from './routes/AIRouter';
 
 // Import the scheduler
 import { startRaceResultScheduler } from './jobs/raceResultJob';
@@ -80,6 +81,7 @@ app.use('/api/v1/standings', standingRouter);
 app.use('/api/v1/ft', fantasyTeamRouter);
 app.use('/api/v1/results', resultRouter);
 app.use('/api/v1/leaderboard', leaderboardRouter);
+app.use('/api/v1/ai', AIRouter);
 
 // Start server
 app.listen(PORT, () => {
