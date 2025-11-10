@@ -21,10 +21,11 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node16",
+    "ignoreDeprecations": "6.0",
     "baseUrl": "./",
-    "paths": {
-      "@/*": ["src/*"]
-    },
+      "paths": {
+        "@/*": ["src/*"]
+      },
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
