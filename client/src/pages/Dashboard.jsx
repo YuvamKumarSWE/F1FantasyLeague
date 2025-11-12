@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import UserRankCard from '../components/UserRankCard';
 import NextRace from '../components/NextRace';
 import CurrentTeam from '../components/CurrentTeam';
+import AIChatbot from '../components/AIChatbot';
 import { Link, useNavigate } from 'react-router-dom';
 import { raceService } from '../services';
 import { useAuth } from '../context/AuthContext';
@@ -10,6 +11,7 @@ function Dashboard() {
   const [nextRace, setNextRace] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -135,6 +137,15 @@ function Dashboard() {
       description: 'Championship rankings',
       color: 'from-orange-600 to-orange-400',
       stats: 'Live Points'
+    },
+    {
+      name: 'AI Chat',
+      path: null, // No path for AI Chat, handled by onClick
+      icon: '🤖',
+      description: 'Ask about F1',
+      color: 'from-pink-600 to-pink-400',
+      stats: 'AI Assistant',
+      onClick: () => setIsChatOpen(true)
     }
   ];
 
@@ -291,18 +302,46 @@ function Dashboard() {
       <nav className="fixed bottom-0 left-0 w-full z-40 bg-black/80 backdrop-blur border-t border-white/10 py-6 px-6">
         {/* Desktop Navigation */}
         <div className="hidden lg:flex justify-center gap-8 max-w-7xl mx-auto overflow-x-auto">
-          {bottomNavCards.map((card) => (
-            <Link
-              key={card.name}
-              to={card.path}
-              className="group relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.04] px-8 py-6 flex flex-col items-center hover:bg-white/[0.08] transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-[#FF1801]/10 flex-shrink-0 w-28"
-            >
-              <div className={`h-12 w-12 rounded-xl bg-gradient-to-br ${card.color} grid place-items-center text-3xl mb-3 group-hover:scale-110 transition-transform duration-300`}>
-                {card.icon}
-              </div>
-              <span className="font-bold text-sm group-hover:text-[#FF1801] transition-colors text-center leading-tight">{card.name}</span>
-            </Link>
-          ))}
+          {bottomNavCards.map((card) => {
+            // If card has onClick (AI Chat), render as button with special styling
+            if (card.onClick) {
+              return (
+                <button
+                  key={card.name}
+                  onClick={card.onClick}
+                  className="group relative overflow-hidden rounded-xl border-2 border-red-400 bg-gradient-to-br from-red-500/40 to-orange-500/40 px-8 py-6 flex flex-col items-center hover:bg-gradient-to-br hover:from-red-500/60 hover:to-orange-500/60 transition-all duration-300 hover:scale-110 hover:shadow-2xl hover:shadow-red-400/80 flex-shrink-0 w-28 animate-pulse-subtle hover:animate-none hover:border-red-300"
+                >
+                  {/* Animated glow effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-red-400/0 via-red-400/40 to-red-400/0 animate-shimmer" />
+                  
+                  <div className={`relative h-12 w-12 rounded-xl bg-gradient-to-br from-red-400 to-orange-400 grid place-items-center text-3xl mb-3 group-hover:scale-125 group-hover:rotate-12 transition-all duration-300 shadow-lg shadow-red-400/80`}>
+                    {card.icon}
+                  </div>
+                  <span className="relative font-bold text-sm text-red-200 group-hover:text-white transition-colors text-center leading-tight">
+                    {card.name}
+                  </span>
+                  
+                  {/* Sparkle effect */}
+                  <div className="absolute top-2 right-2 w-2 h-2 bg-red-300 rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-ping" />
+                  <div className="absolute bottom-2 left-2 w-2 h-2 bg-orange-300 rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-ping" style={{ animationDelay: '0.2s' }} />
+                </button>
+              );
+            }
+            
+            // Otherwise render as Link
+            return (
+              <Link
+                key={card.name}
+                to={card.path}
+                className="group relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.04] px-8 py-6 flex flex-col items-center hover:bg-white/[0.08] transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-[#FF1801]/10 flex-shrink-0 w-28"
+              >
+                <div className={`h-12 w-12 rounded-xl bg-gradient-to-br ${card.color} grid place-items-center text-3xl mb-3 group-hover:scale-110 transition-transform duration-300`}>
+                  {card.icon}
+                </div>
+                <span className="font-bold text-sm group-hover:text-[#FF1801] transition-colors text-center leading-tight">{card.name}</span>
+              </Link>
+            );
+          })}
         </div>
       </nav>
 
@@ -354,30 +393,97 @@ function Dashboard() {
 
               {/* Navigation Items */}
               <div className="space-y-2">
-                {bottomNavCards.map((card) => (
-                  <Link
-                    key={card.name}
-                    to={card.path}
-                    onClick={closeMenu}
-                    className="group flex items-center gap-4 p-4 rounded-xl border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-[#FF1801]/10"
-                  >
-                    <div className={`h-12 w-12 rounded-xl bg-gradient-to-br ${card.color} grid place-items-center text-2xl group-hover:scale-110 transition-transform duration-300`}>
-                      {card.icon}
-                    </div>
-                    <div className="flex-1">
-                      <div className="font-bold text-lg group-hover:text-[#FF1801] transition-colors">{card.name}</div>
-                      <div className="text-sm text-gray-400">{card.description}</div>
-                    </div>
-                    <svg className="w-5 h-5 text-gray-400 group-hover:text-[#FF1801] group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </Link>
-                ))}
+                {bottomNavCards.map((card) => {
+                  // If card has onClick (AI Chat), render as button with special styling
+                  if (card.onClick) {
+                    return (
+                      <button
+                        key={card.name}
+                        onClick={() => {
+                          card.onClick();
+                          closeMenu();
+                        }}
+                        className="group relative overflow-hidden flex items-center gap-4 p-4 rounded-xl border-2 border-red-400 bg-gradient-to-r from-red-500/40 via-orange-500/40 to-red-500/40 hover:from-red-500/60 hover:via-orange-500/60 hover:to-red-500/60 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-red-400/80 w-full animate-pulse-subtle hover:animate-none"
+                      >
+                        {/* Animated background shimmer */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-red-400/30 to-transparent animate-shimmer" />
+                        
+                        <div className={`relative h-12 w-12 rounded-xl bg-gradient-to-br from-red-400 to-orange-400 grid place-items-center text-2xl group-hover:scale-125 group-hover:rotate-12 transition-all duration-300 shadow-lg shadow-red-400/80`}>
+                          {card.icon}
+                        </div>
+                        <div className="flex-1 text-left relative">
+                          <div className="font-bold text-lg text-red-200 group-hover:text-white transition-colors">{card.name}</div>
+                          <div className="text-sm text-red-300/80 group-hover:text-red-200/90">{card.description}</div>
+                        </div>
+                        <svg className="relative w-5 h-5 text-red-300 group-hover:text-red-200 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                        
+                        {/* Sparkle effects */}
+                        <div className="absolute top-2 right-8 w-2 h-2 bg-red-300 rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-ping" />
+                        <div className="absolute bottom-2 left-16 w-2 h-2 bg-orange-300 rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-ping" style={{ animationDelay: '0.2s' }} />
+                      </button>
+                    );
+                  }
+                  
+                  // Otherwise render as Link
+                  return (
+                    <Link
+                      key={card.name}
+                      to={card.path}
+                      onClick={closeMenu}
+                      className="group flex items-center gap-4 p-4 rounded-xl border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-[#FF1801]/10"
+                    >
+                      <div className={`h-12 w-12 rounded-xl bg-gradient-to-br ${card.color} grid place-items-center text-2xl group-hover:scale-110 transition-transform duration-300`}>
+                        {card.icon}
+                      </div>
+                      <div className="flex-1">
+                        <div className="font-bold text-lg group-hover:text-[#FF1801] transition-colors">{card.name}</div>
+                        <div className="text-sm text-gray-400">{card.description}</div>
+                      </div>
+                      <svg className="w-5 h-5 text-gray-400 group-hover:text-[#FF1801] group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           </div>
         </div>
       )}
+
+      {/* AI Chatbot Component */}
+      <AIChatbot isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
+      
+      {/* Custom CSS for animations */}
+      <style jsx>{`
+        @keyframes pulse-subtle {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.9;
+          }
+        }
+        
+        @keyframes shimmer {
+          0% {
+            transform: translateX(-100%);
+          }
+          100% {
+            transform: translateX(100%);
+          }
+        }
+        
+        .animate-pulse-subtle {
+          animation: pulse-subtle 3s ease-in-out infinite;
+        }
+        
+        .animate-shimmer {
+          animation: shimmer 3s ease-in-out infinite;
+        }
+      `}</style>
     </div>
 
   );
