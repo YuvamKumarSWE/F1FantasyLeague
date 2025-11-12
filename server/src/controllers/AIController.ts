@@ -137,6 +137,16 @@ async function fetchSiteData(userId?: string) {
       });
     }
     
+    // Check if critical data is available
+    // Critical data: drivers and constructors (core F1 data)
+    // If both are empty/missing, return null to indicate complete failure
+    const hasCriticalData = drivers.length > 0 && constructors.length > 0;
+    
+    if (!hasCriticalData) {
+      console.error('Critical data missing: Unable to fetch drivers or constructors');
+      return null;
+    }
+    
     return siteData;
   } catch (error) {
     console.error('Error fetching site data:', error);
@@ -357,6 +367,18 @@ export const handleAIChatbot = async (req: Request, res: Response) => {
     
     // Fetch current site data including user's fantasy teams if available
     const siteData = await fetchSiteData(userId);
+    
+    // Check if critical data is available
+    if (!siteData) {
+      // Decrement counter since we're not actually making an AI call
+      aiCallCount--;
+      
+      return res.status(503).json({
+        success: false,
+        message: 'Unable to fetch F1 data at this time. Please try again later.',
+        data: null
+      });
+    }
     
     // Create context for the AI
     const context = createContextString(siteData);
