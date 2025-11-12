@@ -64,14 +64,21 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
   : ['http://localhost:5173']; // fallback for development
 
+// Optional: Allow Vercel preview deployments (configurable via environment variable)
+const allowVercelOrigins = process.env.ALLOW_VERCEL_ORIGINS === 'true';
+
 app.use(cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (mobile apps, Postman, etc.)
     if (!origin) return callback(null, true);
     
     // Check if origin is in allowed origins array
-    // Remove the overly permissive regex pattern for better security
-    if (allowedOrigins.includes(origin)) {
+    const isAllowedOrigin = allowedOrigins.includes(origin);
+    
+    // Optionally check if origin matches Vercel pattern (if enabled via env var)
+    const isVercelOrigin = allowVercelOrigins && /https:\/\/.*\.vercel\.app$/.test(origin);
+    
+    if (isAllowedOrigin || isVercelOrigin) {
       callback(null, true);
     } else {
       if (process.env.NODE_ENV === 'development') {
