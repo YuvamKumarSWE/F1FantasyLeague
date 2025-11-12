@@ -1,8 +1,10 @@
 import { authMiddleware } from '../middleware/authMiddleware';
 import express from 'express';
-const router = express.Router();
-const AIController = require('../controllers/AICoordinatorController');
+import { handleAIChatbot } from '../controllers/AIController';
 
-router.route('/').get(authMiddleware, AIController.handleAIRequest);
+const router = express.Router();
+
+// AI chatbot endpoint - requires authentication
+router.route('/chat').post(authMiddleware, handleAIChatbot);
 
 export default router;
