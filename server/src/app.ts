@@ -30,7 +30,33 @@ app.set("trust proxy", 1);
 // Middleware
 app.use(express.json({ limit: "100kb" }));
 app.use(express.urlencoded({ extended: true, limit: "100kb" }));
-app.use(helmet());
+
+// Enhanced Helmet security configuration
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"], // For inline styles
+      scriptSrc: ["'self'"],
+      imgSrc: ["'self'", "data:", "https:"],
+      connectSrc: ["'self'", "https://f1api.dev"], // Allow F1 API
+      fontSrc: ["'self'", "data:"],
+      objectSrc: ["'none'"],
+      mediaSrc: ["'self'"],
+      frameSrc: ["'none'"],
+    },
+  },
+  hsts: {
+    maxAge: 31536000, // 1 year
+    includeSubDomains: true,
+    preload: true
+  },
+  noSniff: true,
+  referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+  xssFilter: true,
+  hidePoweredBy: true
+}));
+
 app.use(cookieParser());
 
 // CORS configuration using environment variables
@@ -43,14 +69,14 @@ app.use(cors({
     // Allow requests with no origin (mobile apps, Postman, etc.)
     if (!origin) return callback(null, true);
     
-    // Check if origin is in allowed origins array or matches Vercel pattern
-    const isAllowed = allowedOrigins.includes(origin) || 
-                     /https:\/\/.*\.vercel\.app$/.test(origin);
-    
-    if (isAllowed) {
+    // Check if origin is in allowed origins array
+    // Remove the overly permissive regex pattern for better security
+    if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      console.log(`CORS blocked origin: ${origin}`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`CORS blocked origin: ${origin}`);
+      }
       callback(new Error('Not allowed by CORS'));
     }
   },
@@ -59,7 +85,14 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 200 }));
+// Global rate limiting: 300 requests per hour
+app.use(rateLimit({ 
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 300, // 300 requests per hour
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+}));
 app.use(morgan('dev'));
 
 // Connect to MongoDB
