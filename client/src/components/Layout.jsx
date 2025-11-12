@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import AIChatbot from './AIChatbot';
 
 const Layout = ({ children, title }) => {
   const { logout } = useAuth();
@@ -71,6 +72,7 @@ const Layout = ({ children, title }) => {
           <p className="text-xs text-gray-400">© 2025 F1 Fantasy League. Built for race fans.</p>
         </div>
       </footer>
+      <AIChatbot />
     </div>
   );
 };

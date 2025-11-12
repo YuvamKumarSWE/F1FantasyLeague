@@ -5,4 +5,5 @@ export { leaderboardService } from './leaderboardService';
 export { raceService } from './raceService';
 export { standingsService } from './standingsService';
 export { resultService } from './resultService';
+export { aiService } from './aiService';
 
