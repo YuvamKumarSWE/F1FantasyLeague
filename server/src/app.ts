@@ -59,7 +59,6 @@ app.use(helmet({
 
 app.use(cookieParser());
 
-// CORS configuration using environment variables
 const allowedOrigins = process.env.ALLOWED_ORIGINS 
   ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
   : ['http://localhost:5173']; // fallback for development
@@ -69,9 +68,11 @@ app.use(cors({
     // Allow requests with no origin (mobile apps, Postman, etc.)
     if (!origin) return callback(null, true);
     
-    // Check if origin is in allowed origins array
-    // Remove the overly permissive regex pattern for better security
-    if (allowedOrigins.includes(origin)) {
+    // Check if origin is in allowed origins array or matches Vercel pattern
+    const isAllowed = allowedOrigins.includes(origin) || 
+                     /https:\/\/.*\.vercel\.app$/.test(origin);
+    
+    if (isAllowed) {
       callback(null, true);
     } else {
       if (process.env.NODE_ENV === 'development') {
