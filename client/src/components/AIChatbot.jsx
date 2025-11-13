@@ -2,6 +2,108 @@ import { useState, useEffect } from 'react';
 import { aiService } from '../services';
 
 /**
+ * Format markdown-like text (bold, italic, lists, etc.)
+ * @param {string} text - Text with markdown formatting
+ * @returns {JSX.Element} - Formatted text
+ */
+const formatMessage = (text) => {
+  if (!text) return null;
+
+  // Split by newlines to preserve line breaks
+  const lines = text.split('\n');
+  
+  return lines.map((line, lineIndex) => {
+    // Process inline formatting within each line
+    const parts = [];
+    let currentIndex = 0;
+    let key = 0;
+
+    // Regex patterns for markdown
+    const boldPattern = /\*\*(.+?)\*\*/g;
+    const italicPattern = /\*(.+?)\*/g;
+    
+    // First, find all bold matches
+    const boldMatches = [...line.matchAll(boldPattern)];
+    
+    if (boldMatches.length > 0) {
+      boldMatches.forEach((match) => {
+        // Add text before the match
+        if (match.index > currentIndex) {
+          const textBefore = line.slice(currentIndex, match.index);
+          // Check for italics in the text before
+          const italicMatches = [...textBefore.matchAll(italicPattern)];
+          if (italicMatches.length > 0) {
+            let italicIndex = 0;
+            italicMatches.forEach((italicMatch) => {
+              if (italicMatch.index > italicIndex) {
+                parts.push(<span key={`${lineIndex}-${key++}`}>{textBefore.slice(italicIndex, italicMatch.index)}</span>);
+              }
+              parts.push(<em key={`${lineIndex}-${key++}`}>{italicMatch[1]}</em>);
+              italicIndex = italicMatch.index + italicMatch[0].length;
+            });
+            if (italicIndex < textBefore.length) {
+              parts.push(<span key={`${lineIndex}-${key++}`}>{textBefore.slice(italicIndex)}</span>);
+            }
+          } else {
+            parts.push(<span key={`${lineIndex}-${key++}`}>{textBefore}</span>);
+          }
+        }
+        
+        // Add bold text
+        parts.push(<strong key={`${lineIndex}-${key++}`}>{match[1]}</strong>);
+        currentIndex = match.index + match[0].length;
+      });
+      
+      // Add remaining text
+      if (currentIndex < line.length) {
+        const remaining = line.slice(currentIndex);
+        const italicMatches = [...remaining.matchAll(italicPattern)];
+        if (italicMatches.length > 0) {
+          let italicIndex = 0;
+          italicMatches.forEach((italicMatch) => {
+            if (italicMatch.index > italicIndex) {
+              parts.push(<span key={`${lineIndex}-${key++}`}>{remaining.slice(italicIndex, italicMatch.index)}</span>);
+            }
+            parts.push(<em key={`${lineIndex}-${key++}`}>{italicMatch[1]}</em>);
+            italicIndex = italicMatch.index + italicMatch[0].length;
+          });
+          if (italicIndex < remaining.length) {
+            parts.push(<span key={`${lineIndex}-${key++}`}>{remaining.slice(italicIndex)}</span>);
+          }
+        } else {
+          parts.push(<span key={`${lineIndex}-${key++}`}>{remaining}</span>);
+        }
+      }
+    } else {
+      // No bold, just check for italics
+      const italicMatches = [...line.matchAll(italicPattern)];
+      if (italicMatches.length > 0) {
+        italicMatches.forEach((match) => {
+          if (match.index > currentIndex) {
+            parts.push(<span key={`${lineIndex}-${key++}`}>{line.slice(currentIndex, match.index)}</span>);
+          }
+          parts.push(<em key={`${lineIndex}-${key++}`}>{match[1]}</em>);
+          currentIndex = match.index + match[0].length;
+        });
+        if (currentIndex < line.length) {
+          parts.push(<span key={`${lineIndex}-${key++}`}>{line.slice(currentIndex)}</span>);
+        }
+      } else {
+        // No formatting, just return the line
+        parts.push(<span key={`${lineIndex}-${key++}`}>{line}</span>);
+      }
+    }
+
+    return (
+      <div key={lineIndex}>
+        {parts}
+        {lineIndex < lines.length - 1 && <br />}
+      </div>
+    );
+  });
+};
+
+/**
  * AI Chatbot Component
  * A floating chatbot widget for asking F1-related questions
  * @param {boolean} isOpen - Controlled state for whether the chat is open (optional)
@@ -148,7 +250,7 @@ const AIChatbot = ({ isOpen: controlledIsOpen, onClose }) => {
                   className={`message ${message.role}`}
                 >
                   <div className="message-content">
-                    {message.content}
+                    {formatMessage(message.content)}
                   </div>
                 </div>
               ))
@@ -433,6 +535,20 @@ const AIChatbot = ({ isOpen: controlledIsOpen, onClose }) => {
           word-wrap: break-word;
           font-size: 14px;
           line-height: 1.6;
+        }
+
+        .message-content strong {
+          font-weight: 700;
+          color: inherit;
+        }
+
+        .message-content em {
+          font-style: italic;
+          color: inherit;
+        }
+
+        .message.assistant .message-content strong {
+          color: #fff;
         }
 
         .message.user .message-content {

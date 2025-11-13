@@ -1,9 +1,5 @@
-// Load environment variables FIRST before any other imports
-import dotenv from 'dotenv';
-dotenv.config();
-
 import express, { Application, Request, Response } from 'express';
-import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 import { connectDb } from './config/db';
 import helmet from 'helmet';
 import cors from 'cors';
@@ -24,6 +20,7 @@ import AIRouter from './routes/AIRouter';
 // Import the scheduler
 import { startRaceResultScheduler } from './jobs/raceResultJob';
 
+dotenv.config();
 const app: Application = express();
 const PORT = process.env.PORT || 5000;
 
@@ -62,6 +59,7 @@ app.use(helmet({
 
 app.use(cookieParser());
 
+// CORS configuration using environment variables
 const allowedOrigins = process.env.ALLOWED_ORIGINS 
   ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
   : ['http://localhost:5173']; // fallback for development
@@ -71,11 +69,9 @@ app.use(cors({
     // Allow requests with no origin (mobile apps, Postman, etc.)
     if (!origin) return callback(null, true);
     
-    // Check if origin is in allowed origins array or matches Vercel pattern
-    const isAllowed = allowedOrigins.includes(origin) || 
-                     /https:\/\/.*\.vercel\.app$/.test(origin);
-    
-    if (isAllowed) {
+    // Check if origin is in allowed origins array
+    // Remove the overly permissive regex pattern for better security
+    if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       if (process.env.NODE_ENV === 'development') {
@@ -108,26 +104,6 @@ startRaceResultScheduler();
 // Routes
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello from TypeScript + Express + MongoDB!');
-});
-
-// Health check endpoint with environment info (for debugging production issues)
-app.get('/health', (req: Request, res: Response) => {
-  const mongoConnected = mongoose.connection.readyState === 1;
-  res.json({
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development',
-    mongodb: mongoConnected ? 'connected' : 'disconnected',
-    port: PORT,
-    // Only show env vars exist, not their values
-    envVars: {
-      MONGO_URI: !!process.env.MONGO_URI,
-      ALLOWED_ORIGINS: !!process.env.ALLOWED_ORIGINS,
-      ACCESS_SECRET: !!process.env.ACCESS_SECRET,
-      REFRESH_SECRET: !!process.env.REFRESH_SECRET,
-      GOOGLE_API_KEY: !!process.env.GOOGLE_API_KEY,
-    }
-  });
 });
 
 app.use('/api/v1/drivers' , driverRouter);
