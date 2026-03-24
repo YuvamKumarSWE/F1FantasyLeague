@@ -60,7 +60,7 @@ async function fetchSiteData(userId?: string) {
         return [];
       }),
       
-      axios.get(`https://f1api.dev/api/2025/drivers-championship`)
+      axios.get(`https://f1api.dev/api/${new Date().getFullYear()}/drivers-championship`)
         .then(res => res.data.drivers_championship)
         .catch(err => {
           if (process.env.NODE_ENV === 'development') {
@@ -256,7 +256,7 @@ IMPORTANT INSTRUCTIONS:
   
   // Drivers with costs
   if (siteData.drivers && siteData.drivers.length > 0) {
-    context += `CURRENT F1 DRIVERS (2025 Season) WITH FANTASY COSTS:\n`;
+    context += `CURRENT F1 DRIVERS (${new Date().getFullYear()} Season) WITH FANTASY COSTS:\n`;
     siteData.drivers.forEach((driver: any) => {
       context += `- #${driver.number} ${driver.name} ${driver.surname} (${driver.shortName}) - ${driver.teamId} - ${driver.nationality} - Cost: $${driver.cost || 'N/A'}M\n`;
     });

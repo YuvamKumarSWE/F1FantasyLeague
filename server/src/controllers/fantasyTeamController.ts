@@ -70,7 +70,7 @@ exports.createTeam = async(req: Request, res: Response) => {
             });
         }
 
-        // Find the race document by raceId (e.g., "dutch_2025")
+        // Find the race document by raceId (e.g., "dutch_2026")
         const raceDocument = await Race.findOne({ raceId: raceId });
         if (!raceDocument) {
             return res.status(400).json({
@@ -220,7 +220,7 @@ exports.createTeam = async(req: Request, res: Response) => {
 exports.getTeam = async(req: Request, res: Response) => {
     try {
         const userId = req.user?._id;
-        const { raceId } = req.params; // This is now "dutch_2025" format
+        const { raceId } = req.params; // This is now "dutch_2026" format
         
         if (!userId || !raceId) {
             return res.status(400).json({
@@ -229,7 +229,7 @@ exports.getTeam = async(req: Request, res: Response) => {
             });
         }
 
-        // Find the race document by raceId (e.g., "dutch_2025")
+        // Find the race document by raceId (e.g., "dutch_2026")
         const raceDocument = await Race.findOne({ raceId: raceId });
         if (!raceDocument) {
             return res.status(404).json({

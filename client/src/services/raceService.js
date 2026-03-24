@@ -1,8 +1,10 @@
 import api from '../lib/axios';
 
+const CURRENT_YEAR = new Date().getFullYear().toString();
+
 export const raceService = {
   // Get all races with optional year filter
-  getRaces: async (year = '2025') => {
+  getRaces: async (year = CURRENT_YEAR) => {
     try {
       const response = await api.get(`/races?year=${year}`);
       return {

@@ -5,7 +5,7 @@ import axios from 'axios';
 exports.getStandings = async (req: Request, res: Response) => {
   try {
     const {
-        year = 2025   
+        year = new Date().getFullYear()
     } = req.query;
     
 

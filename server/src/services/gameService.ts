@@ -16,7 +16,7 @@ export async function processRaceResults(raceId: string) {
         console.log(`Race round: ${race.round}`);
 
         // Get race results from external API using year and round
-        const apiUrl = `https://f1api.dev/api/2025/${race.round}/race`;
+        const apiUrl = `https://f1api.dev/api/${race.year}/${race.round}/race`;
         let raceResults;
         
         try {

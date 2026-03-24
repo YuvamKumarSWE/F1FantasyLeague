@@ -1,12 +1,14 @@
 import { Request, Response } from "express";
 import { Race, IRace } from "../models";
 
+const CURRENT_YEAR = new Date().getFullYear();
+
 exports.getRaces = async (req: Request, res: Response) => {
   try {
-    const { year = '2025' } = req.query;
+    const { year = String(CURRENT_YEAR) } = req.query;
 
     const yearNumber = parseInt(year as string, 10);
-    if (isNaN(yearNumber) || yearNumber >= 2026 || yearNumber < 2023) {
+    if (isNaN(yearNumber) || yearNumber > CURRENT_YEAR + 1 || yearNumber < 2020) {
       return res.status(400).json({
         success: false,
         message: "Invalid year parameter",
@@ -81,12 +83,12 @@ exports.getNextRace = async (req: Request, res: Response) => {
 exports.getCompletedRaces = async (req: Request, res: Response) => {
   try {
     const now = new Date();
-    const { year = '2025', limit = '10' } = req.query;
-    
+    const { year = String(CURRENT_YEAR), limit = '10' } = req.query;
+
     const yearNumber = parseInt(year as string, 10);
     const limitNumber = parseInt(limit as string, 10);
-    
-    if (isNaN(yearNumber) || yearNumber >= 2026 || yearNumber < 2023) {
+
+    if (isNaN(yearNumber) || yearNumber > CURRENT_YEAR + 1 || yearNumber < 2020) {
       return res.status(400).json({
         success: false,
         message: "Invalid year parameter",
@@ -122,12 +124,12 @@ exports.getCompletedRaces = async (req: Request, res: Response) => {
 exports.getUpcomingRaces = async (req: Request, res: Response) => {
   try {
     const now = new Date();
-    const { year = '2025', limit = '5' } = req.query;
-    
+    const { year = String(CURRENT_YEAR), limit = '5' } = req.query;
+
     const yearNumber = parseInt(year as string, 10);
     const limitNumber = parseInt(limit as string, 10);
-    
-    if (isNaN(yearNumber) || yearNumber >= 2026 || yearNumber < 2023) {
+
+    if (isNaN(yearNumber) || yearNumber > CURRENT_YEAR + 1 || yearNumber < 2020) {
       return res.status(400).json({
         success: false,
         message: "Invalid year parameter",

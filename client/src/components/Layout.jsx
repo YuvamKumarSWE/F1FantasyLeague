@@ -69,7 +69,7 @@ const Layout = ({ children, title }) => {
             <div className="h-8 w-8 rounded-md bg-gradient-to-br from-[#FF1801] to-red-600 grid place-items-center text-sm font-bold">F1</div>
             <span className="font-f1">Fantasy League</span>
           </div>
-          <p className="text-xs text-gray-400">© 2025 F1 Fantasy League. Built for race fans.</p>
+          <p className="text-xs text-gray-400">{`© ${new Date().getFullYear()} F1 Fantasy League. Built for race fans.`}</p>
         </div>
       </footer>
       <AIChatbot />

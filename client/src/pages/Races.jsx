@@ -16,7 +16,7 @@ function Races() {
         setLoading(true);
 
         // Fetch all race data
-        const allRacesResponse = await raceService.getRaces('2025');
+        const allRacesResponse = await raceService.getRaces();
 
         if (allRacesResponse.success) {
           setAllRaces(allRacesResponse.data);
@@ -131,7 +131,7 @@ function Races() {
         <div className="space-y-8">
           <div className="text-center">
             <h1 className="text-4xl font-black mb-2">Race Calendar</h1>
-            <p className="text-gray-300">Loading 2025 season schedule...</p>
+            <p className="text-gray-300">{`Loading ${new Date().getFullYear()} season schedule...`}</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(6)].map((_, index) => (
@@ -177,7 +177,7 @@ function Races() {
         {/* Header */}
         <div className="text-center">
           <h1 className="text-4xl font-black mb-2">Grand Prix Calendar</h1>
-          <p className="text-gray-300">Complete 2025 Formula 1 season schedule</p>
+          <p className="text-gray-300">{`Complete ${new Date().getFullYear()} Formula 1 season schedule`}</p>
         </div>
 
         {/* Next Race Section */}

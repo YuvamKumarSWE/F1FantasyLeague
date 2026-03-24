@@ -29,7 +29,7 @@ const getConstructors = async (): Promise<void> => {
     await connectDb();
 
     const response = await axios.get<ApiResponse>(
-      "https://f1api.dev/api/current/teams"
+      "https://f1api.dev/api/2026/teams"
     );
     const data: ApiTeam[] = response.data.teams;
 
