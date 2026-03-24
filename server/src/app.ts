@@ -102,8 +102,8 @@ connectDb();
 startRaceResultScheduler();
 
 // Routes
-app.get('/', (req: Request, res: Response) => {
-  res.send('Hello from TypeScript + Express + MongoDB!');
+app.get('/health', (req: Request, res: Response) => {
+  res.json({ ok: true });
 });
 
 app.use('/api/v1/drivers' , driverRouter);

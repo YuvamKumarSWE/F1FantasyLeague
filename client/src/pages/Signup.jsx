@@ -2,25 +2,22 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-function Signup() {
-  const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
-  });
+const inputStyle = {
+  width: '100%', padding: '11px 14px',
+  background: '#161616', border: '1px solid rgba(255,255,255,0.1)',
+  borderRadius: '8px', color: '#f5f5f5', fontSize: '14px',
+  outline: 'none', transition: 'border-color 0.2s',
+  boxSizing: 'border-box',
+};
+
+export default function Signup() {
+  const [formData, setFormData] = useState({ username: '', email: '', password: '', confirmPassword: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  
   const { signup } = useAuth();
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,192 +29,98 @@ function Signup() {
       setLoading(false);
       return;
     }
-
     if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
+      setError('Password must be at least 6 characters');
       setLoading(false);
       return;
     }
 
-    const result = await signup({
-      username: formData.username,
-      email: formData.email,
-      password: formData.password
-    });
-    
+    const result = await signup({ username: formData.username, email: formData.email, password: formData.password });
     if (result.success) {
       navigate('/dashboard');
     } else {
       setError(result.error);
     }
-    
     setLoading(false);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-slate-950 to-black text-white">
-      {/* Top Nav */}
-      <header className="sticky top-0 z-30 border-b border-white/10 bg-black/40 backdrop-blur">
-        <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-[#FF1801] to-red-600 grid place-items-center">
-              <span className="font-bold font-f1">F1</span>
-            </div>
-            <span className="font-f1 text-xl tracking-wide">Fantasy League</span>
+    <div style={{ minHeight: '100vh', background: '#0a0a0a', color: '#f5f5f5', display: 'flex', flexDirection: 'column' }}>
+      {/* Nav */}
+      <header style={{ borderBottom: '1px solid rgba(255,255,255,0.07)', background: 'rgba(10,10,10,0.95)', backdropFilter: 'blur(16px)', padding: '0 24px' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Link to="/landing" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
+            <div style={{ width: '34px', height: '34px', background: '#E10600', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900, fontSize: '14px', color: '#fff' }}>F1</div>
+            <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '17px', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#f5f5f5' }}>Fantasy League</span>
           </Link>
-          <nav className="hidden md:flex items-center gap-2">
-            <Link to="/login" className="px-4 py-2 text-gray-300 hover:text-white rounded-lg hover:bg-white/10">Sign In</Link>
-          </nav>
+          <Link to="/login" style={{ fontSize: '13px', color: '#666', textDecoration: 'none', padding: '8px 14px', borderRadius: '6px', transition: 'color 0.2s' }}
+            onMouseEnter={e => e.currentTarget.style.color = '#ccc'}
+            onMouseLeave={e => e.currentTarget.style.color = '#666'}
+          >
+            Sign in
+          </Link>
         </div>
       </header>
 
-      {/* Main Content */}
-      <div className="relative mx-auto max-w-7xl px-6 py-16">
-        <div className="mx-auto max-w-md">
-          {/* Background Effects */}
-          <div className="pointer-events-none absolute inset-0">
-            <div className="absolute -top-32 right-0 h-80 w-80 rounded-full bg-[#FF1801]/10 blur-3xl" />
-            <div className="absolute -bottom-40 -left-10 h-96 w-96 rounded-full bg-red-500/5 blur-3xl" />
+      {/* Content */}
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '48px 24px' }}>
+        <div style={{ width: '100%', maxWidth: '400px', animation: 'slideUp 0.5s cubic-bezier(0.16,1,0.3,1) both' }}>
+          <div style={{ marginBottom: '28px' }}>
+            <h1 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900, fontSize: '36px', textTransform: 'uppercase', letterSpacing: '0.02em', marginBottom: '6px' }}>
+              Join the Grid
+            </h1>
+            <p style={{ fontSize: '14px', color: '#555' }}>Create your account and start racing</p>
           </div>
 
-          <div className="relative">
-            {/* Header */}
-            <div className="text-center mb-8">
-              <p className="text-gray-300">Create your account and start racing</p>
-            </div>
+          <div style={{ background: '#111', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px', padding: '28px' }}>
+            {error && (
+              <div style={{ marginBottom: '20px', padding: '12px 14px', background: 'rgba(225,6,0,0.08)', border: '1px solid rgba(225,6,0,0.2)', borderRadius: '8px', fontSize: '13px', color: '#ff6b6b' }}>
+                {error}
+              </div>
+            )}
 
-            {/* Signup Card */}
-            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-8 backdrop-blur-sm">
-              {error && (
-                <div className="mb-6 rounded-xl border border-red-500/20 bg-red-500/10 p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="h-5 w-5 rounded-full bg-red-500/20 flex items-center justify-center">
-                      <span className="text-xs text-red-400">!</span>
-                    </div>
-                    <p className="text-sm text-red-300">{error}</p>
-                  </div>
-                </div>
-              )}
-
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <label htmlFor="username" className="block text-sm font-semibold text-gray-300 mb-2">
-                    Driver Name
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {[
+                { label: 'Driver Name', name: 'username', type: 'text', placeholder: 'Your racing name' },
+                { label: 'Email', name: 'email', type: 'email', placeholder: 'you@example.com' },
+                { label: 'Password', name: 'password', type: 'password', placeholder: '••••••••', hint: 'Minimum 6 characters' },
+                { label: 'Confirm Password', name: 'confirmPassword', type: 'password', placeholder: '••••••••' },
+              ].map((field) => (
+                <div key={field.name}>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#666', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>
+                    {field.label}
                   </label>
                   <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    value={formData.username}
-                    onChange={handleChange}
-                    required
-                    className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-gray-400 focus:border-[#FF1801] focus:outline-none focus:ring-1 focus:ring-[#FF1801] transition-colors"
-                    placeholder="Choose your racing name"
+                    type={field.type} name={field.name}
+                    value={formData[field.name]} onChange={handleChange}
+                    required placeholder={field.placeholder}
+                    style={inputStyle}
+                    onFocus={e => e.target.style.borderColor = '#E10600'}
+                    onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
                   />
+                  {field.hint && <p style={{ fontSize: '11px', color: '#444', marginTop: '4px' }}>{field.hint}</p>}
                 </div>
+              ))}
 
-                <div>
-                  <label htmlFor="email" className="block text-sm font-semibold text-gray-300 mb-2">
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-gray-400 focus:border-[#FF1801] focus:outline-none focus:ring-1 focus:ring-[#FF1801] transition-colors"
-                    placeholder="Enter your email"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="password" className="block text-sm font-semibold text-gray-300 mb-2">
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                    className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-gray-400 focus:border-[#FF1801] focus:outline-none focus:ring-1 focus:ring-[#FF1801] transition-colors"
-                    placeholder="Create a secure password"
-                  />
-                  <p className="text-xs text-gray-400 mt-1">Minimum 6 characters</p>
-                </div>
-
-                <div>
-                  <label htmlFor="confirmPassword" className="block text-sm font-semibold text-gray-300 mb-2">
-                    Confirm Password
-                  </label>
-                  <input
-                    type="password"
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    required
-                    className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-gray-400 focus:border-[#FF1801] focus:outline-none focus:ring-1 focus:ring-[#FF1801] transition-colors"
-                    placeholder="Confirm your password"
-                  />
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <input
-                    type="checkbox"
-                    required
-                    className="mt-1 rounded border-white/20 bg-white/5 text-[#FF1801] focus:ring-[#FF1801]"
-                  />
-                  <span className="text-sm text-gray-300 leading-relaxed">
-                    I agree to the{' '}
-                    <Link to="/terms" className="text-[#FF1801] hover:text-red-400 transition-colors">
-                      Terms of Service
-                    </Link>{' '}
-                    and{' '}
-                    <Link to="/privacy" className="text-[#FF1801] hover:text-red-400 transition-colors">
-                      Privacy Policy
-                    </Link>
-                  </span>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full rounded-xl bg-gradient-to-r from-[#FF1801] to-red-600 py-3 font-semibold text-white hover:from-red-600 hover:to-[#FF1801] focus:outline-none focus:ring-2 focus:ring-[#FF1801] focus:ring-offset-2 focus:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                >
-                  {loading ? 'Creating Account...' : 'Start Racing'}
-                </button>
-              </form>
-            </div>
-
-            {/* Footer */}
-            <div className="mt-8 text-center">
-              <p className="text-gray-400">
-                Already on the grid?{' '}
-                <Link to="/login" className="text-[#FF1801] hover:text-red-400 font-semibold transition-colors">
-                  Sign in
-                </Link>
-              </p>
-            </div>
+              <button
+                type="submit"
+                disabled={loading}
+                className="btn-f1-primary"
+                style={{ width: '100%', marginTop: '4px', opacity: loading ? 0.6 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}
+              >
+                {loading ? 'Creating Account...' : 'Start Racing'}
+              </button>
+            </form>
           </div>
+
+          <p style={{ marginTop: '20px', textAlign: 'center', fontSize: '13px', color: '#444' }}>
+            Already on the grid?{' '}
+            <Link to="/login" style={{ color: '#E10600', textDecoration: 'none', fontWeight: 600 }}>
+              Sign in
+            </Link>
+          </p>
         </div>
       </div>
-
-      {/* Footer */}
-      <footer className="border-t border-white/10 bg-black/60 mt-16">
-        <div className="mx-auto max-w-7xl px-6 py-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-md bg-gradient-to-br from-[#FF1801] to-red-600 grid place-items-center text-sm font-bold">F1</div>
-            <span className="font-f1">Fantasy League</span>
-          </div>
-          <p className="text-xs text-gray-400">{`© ${new Date().getFullYear()} F1 Fantasy League. Built for race fans.`}</p>
-        </div>
-      </footer>
     </div>
   );
 }
-
-export default Signup;

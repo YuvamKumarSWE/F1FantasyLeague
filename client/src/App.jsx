@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import ServerWakeup from './components/ServerWakeup';
 import Landing from './pages/Landing';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
@@ -16,6 +17,7 @@ import RaceResults from './pages/RaceResults';
 function App() {
   return (
     <AuthProvider>
+      <ServerWakeup />
       <Router>
         <Routes>
           <Route path="/" element={<Navigate to="/landing" replace />} />

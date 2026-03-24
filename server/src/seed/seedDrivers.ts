@@ -24,8 +24,9 @@ async function seedDrivers(): Promise<void> {
   try {
     await connectDb();
 
+    const year = new Date().getFullYear();
     const { data } = await axios.get<ApiResponse>(
-      'https://f1api.dev/api/2026/drivers?limit=20'
+      `https://f1api.dev/api/${year}/drivers?limit=20`
     );
     const drivers = data.drivers;
 

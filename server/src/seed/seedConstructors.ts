@@ -28,8 +28,9 @@ const getConstructors = async (): Promise<void> => {
   try {
     await connectDb();
 
+    const year = new Date().getFullYear();
     const response = await axios.get<ApiResponse>(
-      "https://f1api.dev/api/2026/teams"
+      `https://f1api.dev/api/${year}/teams`
     );
     const data: ApiTeam[] = response.data.teams;
 

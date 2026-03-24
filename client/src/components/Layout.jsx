@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import AIChatbot from './AIChatbot';
@@ -13,35 +12,61 @@ const Layout = ({ children, title }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-slate-950 to-black text-white">
-      {/* Simple Header */}
-      <header className="sticky top-0 z-30 border-b border-white/10 bg-black/40 backdrop-blur">
-        <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link to="/dashboard" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-[#FF1801] to-red-600 grid place-items-center">
-                <span className="font-bold font-f1">F1</span>
-              </div>
-              <span className="font-f1 text-xl tracking-wide">Fantasy League</span>
+    <div style={{ minHeight: '100vh', background: '#0a0a0a', color: '#f5f5f5' }}>
+
+      {/* Header */}
+      <header style={{
+        position: 'sticky', top: 0, zIndex: 30,
+        borderBottom: '1px solid rgba(255,255,255,0.07)',
+        background: 'rgba(10,10,10,0.95)',
+        backdropFilter: 'blur(16px)',
+      }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <Link to="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
+              <div style={{
+                width: '32px', height: '32px', background: '#E10600', borderRadius: '6px',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900, fontSize: '13px', color: '#fff',
+              }}>F1</div>
+              <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '16px', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#f5f5f5' }}>
+                Fantasy League
+              </span>
             </Link>
             {title && (
               <>
-                <div className="h-6 w-px bg-white/20"></div>
-                <h1 className="text-lg font-semibold text-gray-300">{title}</h1>
+                <div style={{ width: '1px', height: '18px', background: 'rgba(255,255,255,0.12)' }} />
+                <span style={{ fontSize: '13px', color: '#555', fontWeight: 500 }}>{title}</span>
               </>
             )}
           </div>
 
-          <div className="flex items-center gap-4">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Link
               to="/dashboard"
-              className="px-4 py-2 rounded-xl border border-white/10 hover:bg-white/10 text-gray-300 hover:text-white transition-all"
+              style={{
+                padding: '7px 14px', borderRadius: '6px',
+                border: '1px solid rgba(255,255,255,0.08)', textDecoration: 'none',
+                color: '#666', fontSize: '12px', fontWeight: 600,
+                fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.06em',
+                textTransform: 'uppercase', transition: 'color 0.2s, border-color 0.2s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.color = '#ccc'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'; }}
+              onMouseLeave={e => { e.currentTarget.style.color = '#666'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; }}
             >
-              ← Back to Dashboard
+              ← Dashboard
             </Link>
             <button
               onClick={handleLogout}
-              className="px-4 py-2 rounded-xl border border-white/10 hover:bg-white/10 text-gray-300 hover:text-white transition-all"
+              style={{
+                padding: '7px 14px', borderRadius: '6px', background: 'transparent',
+                border: '1px solid rgba(255,255,255,0.08)', cursor: 'pointer',
+                color: '#555', fontSize: '12px', fontWeight: 600,
+                fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.06em',
+                textTransform: 'uppercase', transition: 'color 0.2s, border-color 0.2s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.color = '#ccc'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'; }}
+              onMouseLeave={e => { e.currentTarget.style.color = '#555'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; }}
             >
               Logout
             </button>
@@ -49,29 +74,22 @@ const Layout = ({ children, title }) => {
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="relative mx-auto max-w-7xl px-6 py-8">
-        {/* Background Effects */}
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -top-32 right-0 h-80 w-80 rounded-full bg-[#FF1801]/5 blur-3xl" />
-          <div className="absolute -bottom-40 -left-10 h-96 w-96 rounded-full bg-red-500/3 blur-3xl" />
-        </div>
-
-        <div className="relative">
-          {children}
-        </div>
+      {/* Main */}
+      <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '32px 24px', position: 'relative' }}>
+        {children}
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 bg-black/60 mt-16">
-        <div className="mx-auto max-w-7xl px-6 py-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-md bg-gradient-to-br from-[#FF1801] to-red-600 grid place-items-center text-sm font-bold">F1</div>
-            <span className="font-f1">Fantasy League</span>
+      <footer style={{ marginTop: '64px', borderTop: '1px solid rgba(255,255,255,0.06)', background: '#080808' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px 24px', display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ width: '26px', height: '26px', background: '#E10600', borderRadius: '5px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900, fontSize: '11px', color: '#fff' }}>F1</div>
+            <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '13px', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#444' }}>Fantasy League</span>
           </div>
-          <p className="text-xs text-gray-400">{`© ${new Date().getFullYear()} F1 Fantasy League. Built for race fans.`}</p>
+          <p style={{ fontSize: '12px', color: '#333' }}>© {new Date().getFullYear()} F1 Fantasy League</p>
         </div>
       </footer>
+
       <AIChatbot />
     </div>
   );
